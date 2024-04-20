@@ -1,0 +1,66 @@
+@mixin flex-column-justify($height, $width, $justification) {
+  display: flex;
+  flex-direction: column;
+  height: $height;
+  width: $width;
+  justify-content: $justification;
+}
+
+@mixin flex-column-justify-align($height, $width, $justification, $align) {
+  display: flex;
+  flex-direction: column;
+  align-items: $align;
+  height: $height;
+  width: $width;
+  justify-content: $justification;
+}
+
+@mixin flex-column($height, $width) {
+  display: flex;
+  flex-direction: column;
+  height: $height;
+  width: $width;
+}
+
+@mixin flex-row($height, $width) {
+  display: flex;
+  flex-direction: row;
+  height: $height;
+  width: $width;
+}
+
+@mixin flex-row-justify($height, $width, $justification) {
+  display: flex;
+  flex-direction: row;
+  height: $height;
+  width: $width;
+  justify-content: $justification;
+}
+
+@mixin flex-row-justify-align($height, $width, $justification, $align) {
+  display: flex;
+  flex-direction: row;
+  height: $height;
+  width: $width;
+  justify-content: $justification;
+  align-items: $align;
+}
+
+@mixin border-with-radius($color, $radius) {
+  border: solid 1px $color;
+  border-radius: $radius;
+}
+
+@mixin border-with-radius-shadow(
+  $color,
+  $radius,
+  $box-color,
+  $h-off,
+  $v-off,
+  $blur
+) {
+  border: solid 1px $color;
+  border-radius: $radius;
+  box-shadow: $h-off, $v-off, $blur, $box-color;
+  outline: none;
+}

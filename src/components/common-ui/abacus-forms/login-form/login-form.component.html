@@ -1,0 +1,29 @@
+<form class="ab-reactive-form__container">
+  <div class="ab-reactive-form__container__logo">
+    <img src="{{ logoUrl }}" />
+  </div>
+  <div class="ab-reactive-form__container__title">Welcome Back!</div>
+  <div class="ab-reactive-form__container__input">
+    <label for="email">email address: </label>
+
+    <div class="ab-reactive-form__container__input-container">
+    
+        <input class="ab-reactive-form__container__input__field"  id="email" type="text" [formControl]="email" />
+
+        <img class="icon" src="{{ emailIcon }}" />
+      </div>
+
+  </div>
+  <div class="ab-reactive-form__container__input">
+    <label for="password">password: </label>
+
+    <div class="ab-reactive-form__container__input-container">
+      <input class="ab-reactive-form__container__input__field" id="password" type="password" [formControl]="password" />
+      <img class="icon" src="{{ passwordIcon }}" />
+    </div>
+  </div>
+
+  <div class="ab-reactive-form__container__button">
+    <ab-button [text]="'login'"></ab-button>
+  </div>
+</form>

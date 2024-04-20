@@ -1,0 +1,31 @@
+@import "../../../styles/mixins.scss";
+@import "../../../styles/spacing.scss";
+@import "../../../styles/colors.scss";
+
+:host {
+  @include flex-row-justify-align(auto, 100%, start, center);
+
+}
+.abacus-home-page {
+  @include flex-row-justify-align(100%, 100%, start, center);
+  background: linear-gradient(to bottom, #d5eaf0, #ffffff);
+  
+
+}
+.abacus-home-page__copy-container {
+  @include flex-row-justify-align(100%, 50%, center, center);
+
+}
+.abacus-home-page__copy-container__img-container {
+  @include flex-row-justify-align(80%, 80%, center, center);
+}
+
+img {
+  @include flex-row-justify-align(100%, 100%, center, center);
+  border-radius: 32px;
+  // box-shadow: 1px 1px 10px 1px grey;
+}
+
+.abacus-home-page__form-container {
+  @include flex-row-justify-align(100%, 100%, center, center);
+}
