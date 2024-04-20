@@ -1,0 +1,19 @@
+@import '../../../../styles/colors.scss';
+
+:host{
+    font:"main"
+}
+
+.ab-button-element{
+    font-family:"main";
+    border-radius: 4px;
+    padding:8px 15px;
+    outline: none;
+    border:none;
+    transition: 0.25s ease-in-out;
+}
+
+.ab-button-element:hover{
+    cursor: pointer;
+    background-color: $light-blue;
+}

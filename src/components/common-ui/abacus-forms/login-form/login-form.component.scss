@@ -1,0 +1,65 @@
+@import "../../../../styles/mixins.scss";
+@import "../../../../styles/spacing.scss";
+@import "../../../../styles/colors.scss";
+
+:host {
+  @include flex-column-justify-align(auto, auto, center, center);
+  border: solid $main-border 1px;
+  padding: 50px;
+  background-color: white;
+}
+
+.ab-reactive-form__container {
+  @include flex-column-justify-align(auto, auto, start, center);
+}
+
+.ab-reactive-form__container__logo {
+  @include flex-row-justify-align(150px, 100%, left, center);
+}
+
+.ab-reactive-form__container__title {
+  padding-top: 20px;
+  font-size: 1.5em;
+  padding-bottom: 20px;
+}
+
+.ab-reactive-form__container__input {
+  @include flex-column-justify-align(auto, auto, start, center);
+  padding: 10px;
+}
+
+img {
+  @include flex-column-justify-align(100%, 100%, start, center);
+}
+
+.ab-reactive-form__container__button {
+  @include flex-row-justify-align(10%, 100%, center, center);
+  margin-top: 20px;
+}
+
+.icon {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  top: 50%;
+  left: 5px; /* Adjust the left position as needed */
+  transform: translateY(-50%);
+}
+
+.ab-reactive-form__container__input__field {
+  position: relative;
+}
+
+.ab-reactive-form__container__input-container {
+  position: relative;
+}
+
+input {
+  font-family: "main";
+  padding-left: 25px;
+}
+
+input:focus {
+  outline: none;
+  // border:none;
+}

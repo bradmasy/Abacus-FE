@@ -25,3 +25,17 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+# ABACUS TIME TRACKING
+
+
+## Adding Angular Modules and Components
+
+1. to add a new module to the project, go to the components directory in src and run the following command
+-<b> ng generate module <module-name></b>
+- this will create a new module directory, binding all the components within here to their module
+2. add the module to the app.module.ts imports list
+3. If routing exists in this module...
+- ng generate module <module-name-routing> --flat --module=../../app
+- this will create a module and register it in the app module (depending on how deep this module is contained, specify the path to the app module from this module in the module flag)
