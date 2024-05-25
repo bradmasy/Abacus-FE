@@ -4,11 +4,11 @@
 
 :host {
   @include flex-row-justify-align(auto, 100%, start, center);
-
+    background-image: url('../../../assets/backgrounds/background-texture.png')
 }
 .abacus-home-page {
   @include flex-row-justify-align(100%, 100%, start, center);
-  background: linear-gradient(to bottom, #d5eaf0, #ffffff);
+//   background: linear-gradient(to bottom, #d5eaf0, #ffffff);
   
 
 }

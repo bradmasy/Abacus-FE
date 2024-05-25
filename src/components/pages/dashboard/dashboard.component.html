@@ -1,0 +1,12 @@
+<ab-flyout-menu (stateChange)="stateChange($event)"></ab-flyout-menu>
+<main class="ab-dashboard__container">
+  @if(viewState() === "projects"){
+  <section class="ab-dashboard__container__projects">
+    @for (project of projects; track project.id) {
+    <ab-project-tile [projectData]="project"> </ab-project-tile>
+    }
+  </section>
+  }
+
+
+</main>

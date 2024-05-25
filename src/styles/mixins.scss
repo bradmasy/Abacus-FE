@@ -6,6 +6,15 @@
   justify-content: $justification;
 }
 
+@mixin box-shadow() {
+  box-shadow: 0px 0px 5px 0px grey;
+}
+
+@mixin set-min-height-width($height, $width){
+  min-width: $width;
+  min-height: $height;
+}
+
 @mixin flex-column-justify-align($height, $width, $justification, $align) {
   display: flex;
   flex-direction: column;

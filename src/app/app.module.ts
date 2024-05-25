@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -7,6 +7,12 @@ import { PageRoutingModule } from '../components/pages/page-routing.module';
 import { CommonUiModule } from '../components/common-ui/common-ui.module';
 import { PagesModule } from '../components/pages/pages.module';
 import { AbacusFormsModule } from '../components/common-ui/abacus-forms/abacus-forms.module';
+import { ApiService } from '../services/api/api.service';
+import { SessionService } from '../services/session/session.service';
+import { SsrCookieService } from 'ngx-cookie-service-ssr';
+import { CookieInitializationService } from '../services/cookieInitializer/cookie-initialization.service';
+import { MenuModule } from '../components/common-ui/menu/menu.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,9 +23,18 @@ import { AbacusFormsModule } from '../components/common-ui/abacus-forms/abacus-f
     AppRoutingModule,
     CommonUiModule,
     PagesModule,
-    AbacusFormsModule
+    AbacusFormsModule,
+    MenuModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [ApiService, SessionService, SsrCookieService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (cookieInitializationService: CookieInitializationService) => () => cookieInitializationService.initializeCookies(),
+      deps: [CookieInitializationService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

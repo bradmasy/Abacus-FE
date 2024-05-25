@@ -1,0 +1,94 @@
+@import "../../../../styles/mixins.scss";
+@import "../../../../styles/colors.scss";
+
+:host {
+  // @include flex-row-justify-align(30%, 20%, center, center);
+  @include flex-row-justify-align(150px, 250px, center, center);
+
+  @include box-shadow();
+  // @include set-min-height-width(150px,250px);
+  border-radius: 8px;
+  background-color: white;
+  transition: 0.25s ease-in-out;
+}
+
+.ab-project-container {
+  @include flex-column-justify-align(90%, 90%, start, center);
+  // border:solid red 1px;
+}
+
+.ab-project-container__img-container {
+  @include flex-row-justify-align(20%, 100%, space-between, center);
+  padding:10px 0px;
+
+
+}
+
+.ab-project-container__img-container__img{
+  @include flex-row-justify-align(100%, auto, space-between, center);
+  // border:solid 1px blue;
+  background-color:rgb(235, 235, 255);
+  padding: 10px;
+  border-radius: 50%;
+  img {
+    @include flex-column-justify-align(80%, auto, center, center);
+    
+  }
+}
+
+.ab-project-title{
+  @include flex-row-justify-align(auto, 50%, start, center);
+  font-weight:500;
+
+}
+
+:host:hover {
+  cursor: pointer;
+  scale: 1.025;
+}
+
+
+.ab-project-container__project-hours{
+  @include flex-row-justify-align(auto, 90%, start, center);
+  margin-top:10px;
+  gap:5px;
+}
+
+.ab-project-container__project-hours__hours{
+  // border:solid red 1px;
+  // @include flex-column-justify-align(100%, auto, end, end);
+  text-align: end;
+  font-size: 1.5em;
+}
+
+
+.ab-project-container__project-hours__left{
+  // @include flex-column-justify-align(100%, auto, end, end);
+  // font-weight: bold;
+  text-align: end;
+}
+.ab-project-container__budget-hours{
+  @include flex-row-justify-align(auto, 100%, start, center);
+
+}
+.ab-project-container__budget-hours__text{
+   @include flex-row-justify-align(100%, 100%, center, center);
+  // border:solid red 1px;
+  font-size: .8em;
+  margin-top:5px;
+  color:rgb(61, 61, 61);
+  gap:5px;
+}
+
+
+.ab-project-container__estimated-value{
+  @include flex-row-justify-align(100%, 100%, space-between, end);
+  // border:solid red 1px;
+  font-size: .8em;
+
+}
+@media screen and (min-width: 1600px) {
+  :host {
+    @include set-min-height-width(200px, 300px);
+  }
+}

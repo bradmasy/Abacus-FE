@@ -1,4 +1,4 @@
-<form class="ab-reactive-form__container">
+<form [formGroup]="loginForm"  (ngSubmit)="onSubmit()" class="ab-reactive-form__container">
   <div class="ab-reactive-form__container__logo">
     <img src="{{ logoUrl }}" />
   </div>

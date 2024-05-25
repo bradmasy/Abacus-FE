@@ -1,0 +1,49 @@
+<section class="ab-flyout-menu__container">
+  <!--User information-->
+  <div class="ab-flyout-menu__container-user">
+    <div class="ab-flyout-menu__container-user__data">
+      <div class="ab-flyout-menu__container-user__picture">
+        <img src="../../../../assets/icons/user/user-80.png" />
+      </div>
+      <div class="ab-flyout-menu__container-user__greeting">
+        <div class="ab-flyout-menu__container-user__greeting__line user-greeting">
+          <p>Hey User!</p>
+        </div>
+        <div class="ab-flyout-menu__container-user__greeting__line">
+          <p>user&#64;user.com</p>
+        </div>
+     
+      </div>
+      <div class="ab-flyout-menu__container-user__greeting__settings">
+            <img src="../../../../assets/icons/ellipsis/ellipsis-90.png">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="ab-flyout-menu__container-menu">
+    <div class="ab-flyout-menu__container-title__title-text">
+      <h3>Abacus</h3>
+    </div>
+    <div class="ab-flyout-menu__container-title__menu">
+      <div #menuItem (click)="changeState('dashboard')" #dashboard class="ab-flyout-menu__container-title__menu__item">
+        <p>Dashboard</p>
+      </div>
+      <div #menuItem (click)="changeState('projects')" #projects class="ab-flyout-menu__container-title__menu__item">
+        <p>My Projects</p>
+      </div>
+      <div #menuItem (click)="changeState('time')" class="ab-flyout-menu__container-title__menu__item">
+        <p>Track Time</p>
+      </div>
+      <div #menuItem (click)="changeState('settings')" class="ab-flyout-menu__container-title__menu__item">
+        <p>Account Settings</p>
+      </div>
+    </div>
+    <div class="ab-flyout-menu__container-logout">
+        <div class="ab-flyout-menu__container-title__menu__item logout" (click)="logout()">
+            <p>Logout</p>
+          </div>
+    </div>  
+</div>
+
+</section>

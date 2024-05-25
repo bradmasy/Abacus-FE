@@ -1,0 +1,24 @@
+@import "../../../styles/mixins.scss";
+@import "../../../styles/spacing.scss";
+@import "../../../styles/colors.scss";
+
+:host{
+    @include flex-row-justify-align(100%, 100%, start, center);
+    // background: linear-gradient(to bottom, #d5eaf0, #ffffff);
+}
+
+.ab-dashboard__container{
+    @include flex-row-justify-align(90%, 80%, center, end);
+    // border:solid 1px blue;
+}
+
+.ab-dashboard__container__projects{
+    @include flex-row-justify-align(90%, 100%, center, center);
+    flex-wrap: wrap;
+    gap:20px;
+    // border:solid red 1px;
+}
+
+@media screen  and (min-width: 1600px){
+
+}

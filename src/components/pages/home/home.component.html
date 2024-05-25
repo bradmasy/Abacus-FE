@@ -1,12 +1,9 @@
-<main class="abacus-home-page">
- <!--   <section class="abacus-home-page__copy-container">
-      <div class="abacus-home-page__copy-container__img-container">
-        <img [src]="imgUrl" />
-      </div>
-    </section>
--->
-    <section class="abacus-home-page__form-container">
-      <ab-login-form></ab-login-form>
-    </section>
-  </main>
-  
+<main (mousemove)="onMouseMove($event)" class="abacus-home-page">
+  <ab-spinner [loading]="loading()"></ab-spinner>
+
+  <section class="abacus-home-page__form-container">
+    <ab-login-form
+      (submitEvent)="receiveLoginCredentials($event)"
+    ></ab-login-form>
+  </section>
+</main>

@@ -1,0 +1,26 @@
+<div class="ab-project-container">
+  <div class="ab-project-container__img-container">
+    <div class="ab-project-container__img-container__img">
+      <img src="../../../../assets/logos/logo-d1-no-background.png" />
+    </div>
+    <div class="ab-project-title">{{ projectData.name }}</div>
+  </div>
+  <div class="ab-project-container__project-hours">
+    <div class="ab-project-container__project-hours__hours">
+      {{ projectData.projectHours.toFixed(2) }}
+    </div>
+    <div class="ab-project-container__project-hours__left">Hours Left</div>
+  </div>
+  <div class="ab-project-container__budget-hours">
+    <div class="ab-project-container__budget-hours__text">
+      Total Budget:
+      <div>{{ projectData.budget.toFixed(0) }} Hours</div>
+    </div>
+  </div>
+  <div class="ab-project-container__estimated-value">
+    <div class="ab-project-container__estimated-value">
+      Project Value: 
+      <div>${{(projectData.budget * 100).toFixed(2)}}</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+@import "../../../styles/colors.scss";
+@import "../../../styles/mixins.scss";
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host {
+  // @include flex-column-justify(100%, 100%, center);
+  // z-index: 2;
+
+  .ab-spinner__spinner {
+    display: none;
+    top: 50%;
+    left: 50%;
+    position: fixed;
+    height: 60px;
+    width: 60px;
+    border: solid 3px;
+    border-color: $main-blue transparent $main-blue transparent;
+    z-index: 3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+.display-spinner {
+  display: block !important;
+}

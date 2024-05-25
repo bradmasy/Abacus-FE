@@ -1,0 +1,126 @@
+@import "../../../../styles/colors.scss";
+@import "../../../../styles/mixins.scss";
+@import "../../../../styles/spacing.scss";
+
+:host {
+  @include flex-column-justify-align(100%, 20%, center, center);
+  background-color: white;
+  box-shadow: 0px 0px 5px 0px grey;
+  min-width: 250px;
+//   z-index:1;
+}
+
+.ab-flyout-menu__container-user {
+  @include flex-row-justify-align(8%, 100%, space-between, center);
+}
+
+.ab-flyout-menu__container-user__data {
+  @include flex-row-justify-align(100%, 100%, left, start);
+  background-color: white;
+  box-shadow: 0px 0px 5px 0px grey;
+  border-radius: 46px;
+}
+
+.ab-flyout-menu__container-user__picture {
+  @include flex-column-justify-align(100%, 25%, center, center);
+
+  img {
+    @include flex-column-justify-align(70%, 80%, start, start);
+    background-color: $main-background;
+    border-radius: 50%;
+    border: grey solid 1px;
+  }
+}
+
+.ab-flyout-menu__container-user__greeting {
+  @include flex-column-justify-align(100%, 50%, center, center);
+}
+
+.ab-flyout-menu__container-user__greeting__line {
+  @include flex-row-justify-align(30%, 100%, left, center);
+  font-size: 0.8em;
+}
+
+.user-greeting {
+  font-weight: bold;
+}
+
+.ab-flyout-menu__container-user__greeting__settings {
+  @include flex-column-justify-align(100%, 30%, center, center);
+  img {
+    @include flex-column-justify-align(35%, 30%, start, start);
+  }
+  img:hover {
+    cursor: pointer;
+  }
+}
+
+.ab-flyout-menu__container-user__close {
+  @include flex-column-justify-align(80%, 15%, start, start);
+
+  img {
+    @include flex-column-justify-align(100%, 100%, start, start);
+    // transition: 0.25s ease-in-out;
+  }
+
+  img:hover {
+    cursor: pointer;
+    filter:  saturate(100%) invert(9%) sepia(91%) saturate(2271%) hue-rotate(222deg) brightness(205%) contrast(100%);
+
+  }
+}
+
+.ab-flyout-menu__container {
+  @include flex-column-justify-align(95%, 90%, space-between, center);
+  min-height: 500px;
+}
+
+.ab-flyout-menu__container-menu {
+  @include flex-column-justify-align(90%, 100%, start, center);
+  background-color: white;
+
+}
+.ab-flyout-menu__container-title__menu {
+  @include flex-column-justify-align(85%, 100%, start, center);
+  gap: 10px;
+}
+
+.ab-flyout-menu__container-title__menu__item {
+  @include flex-column-justify-align(auto, 95%, start, center);
+  border-radius: 8px;
+  background-color: $main-background;
+}
+.ab-flyout-menu__container-title__menu__item:hover {
+    background-color: $royal-blue!important;
+    color:white!important;
+    cursor: pointer;
+}
+
+.ab-flyout-menu__container-title__title-text {
+  @include flex-column-justify-align(auto, 90%, start, start);
+}
+
+.ab-flyout-menu__container-logout{
+    @include flex-column-justify-align(auto, 100%, center, center);
+  
+}
+
+.logout{
+    background-color: rgb(247, 212, 212);
+    margin-bottom:10px;
+}
+
+.logout:hover{
+    background-color: rgb(248, 189, 189);
+}
+
+
+@media screen  and (min-width: 1600px){
+    :host {
+        @include flex-column-justify-align(100%, 15%, center, center);
+    
+      }
+      .ab-flyout-menu__container-user {
+        @include flex-row-justify-align(6%, 100%, space-between, center);
+      }
+}
