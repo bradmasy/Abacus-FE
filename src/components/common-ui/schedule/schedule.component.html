@@ -1,0 +1,60 @@
+<main class="ab-schedule-container">
+  <div class="ab-schedule-container__toolbar">
+    <div class="ab-schedule-container__toolbar__tools">
+      <div class="ab-schedule-container__toolbar__date">
+        {{ formattedDate }}
+      </div>
+      <div class="ab-schedule-container__toolbar__view-buttons">
+        <ab-button [text]="'Calendar'"></ab-button>
+        <ab-button [text]="'Day'"></ab-button>
+      </div>
+    </div>
+
+    @if(state() === "day"){
+    <div class="ab-schedule-container__day-toolbar">
+      <div class="ab-schedule-container__day-toolbar__alignment">
+        @for(day of daysOfTheWeek; track day){
+        <div class="ab-schedule-container__day-toolbar__day">
+          <div class="ab-schedule-container__day-toolbar__day__container">
+            <div class="ab-schedule-container__day-toolbar__day__container__day">{{ day }}</div>
+            <div  class="ab-schedule-container__day-toolbar__day__container__date">
+                <div  class="ab-schedule-container__day-toolbar__day__container__date__month">{{currentMonth}}</div>
+                <div  class="ab-schedule-container__day-toolbar__day__container__date__day-number">{{getDay(day)}}</div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+  <!--The Schedule Component of the Schedule Page-->
+  <div class="ab-schedule-container__time-blocks">
+    <div class="ab-schedule-container__time-blocks__times">
+      @for(hour of hoursArray; track hour){
+      <div class="ab-schedule-container__time-blocks__times__hour-tile">
+        {{
+          hour < 12
+            ? hour === 0
+              ? 12 + ":00 AM"
+              : hour + ":00 AM"
+            : hour === 12
+            ? hour + ":00 PM"
+            : hour - 12 + ":00 PM"
+        }}
+      </div>
+      }
+    </div>
+    @for(day of daysOfTheWeek; track day){
+    <div class="ab-schedule-container__time-blocks-container">
+      <div class="ab-schedule-container__time-blocks__day-column">
+        @for(hour of hoursArray; track hour){
+        <ab-schedule-tile [hour]="hour"></ab-schedule-tile>
+        }
+      </div>
+    </div>
+
+    }
+  </div>
+</main>

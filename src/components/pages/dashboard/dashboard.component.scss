@@ -8,17 +8,24 @@
 }
 
 .ab-dashboard__container{
-    @include flex-row-justify-align(90%, 80%, center, end);
+    @include flex-row-justify-align(100%, 100%, center, center);
     // border:solid 1px blue;
 }
 
 .ab-dashboard__container__projects{
-    @include flex-row-justify-align(90%, 100%, center, center);
+    @include flex-row-justify-align(90%, 95%, left, center);
     flex-wrap: wrap;
     gap:20px;
+
     // border:solid red 1px;
 }
 
+
+.ab-dashboard__container__time{
+    @include flex-row-justify-align(100%, 100%, center, center);
+
+
+}
 @media screen  and (min-width: 1600px){
 
 }

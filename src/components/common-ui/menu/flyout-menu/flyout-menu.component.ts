@@ -16,7 +16,7 @@ export class FlyoutMenuComponent implements OnInit, AfterViewInit {
 
 
 
-  @Output() stateBehaviour: BehaviorSubject<string> = new BehaviorSubject<string>("projects");
+  @Output() stateBehaviour: BehaviorSubject<string> = new BehaviorSubject<string>("time");
   @Output() stateChange = new EventEmitter<string>();
 
 

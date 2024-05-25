@@ -1,0 +1,22 @@
+@import "../../../../styles/index.scss";
+
+:host {
+  @include flex-column-justify-align(200px, 100%, center, center);
+  //   border: solid red 1px;
+}
+.ab-schedule-tile-container {
+  @include flex-column-justify-align(200px, 100%, center, center);
+//   border: solid rgb(162, 162, 162) 1px;
+}
+
+.ab-schedule-tile-container__block {
+    @include flex-column-justify-align(25%, 100%, center, center);
+
+  border-bottom: solid rgb(162, 162, 162) 1px;
+}
+
+
+.ab-schedule-tile-container__block:hover {
+    background-color: $main-blue;
+    cursor: pointer;
+}

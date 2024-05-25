@@ -39,3 +39,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 3. If routing exists in this module...
 - ng generate module <module-name-routing> --flat --module=../../app
 - this will create a module and register it in the app module (depending on how deep this module is contained, specify the path to the app module from this module in the module flag)
+
+### Adding a Component to a Module
+
+1. cd to that directory and run this command 
+- ng generate component <component-name> --module=<module-name-in-dir>

@@ -1,0 +1,120 @@
+@import "../../../styles/index.scss";
+
+:host {
+  @include flex-column-justify-align(100%, 100%, center, center);
+  // border:solid pink 1px;
+}
+.ab-schedule-container {
+  @include flex-column-justify-align(100%, 100%, start, center);
+  // border:solid pink 1px;
+}
+
+.ab-schedule-container__toolbar {
+  @include flex-column-justify-align(120px, 100%, space-between, center);
+  border-bottom: solid rgb(162, 162, 162) 1px;
+  //  background-color: $light-blue;
+}
+
+.ab-schedule-container__toolbar__tools {
+  @include flex-row-justify-align(100px, 100%, space-between, center);
+  //   border: solid green 1px;
+}
+
+.ab-schedule-container__toolbar__date {
+  @include flex-row-justify-align(100px, auto, space-between, center);
+  //  border:solid red 1px;
+  padding: 0px 20px;
+  font-size: 1.5em;
+}
+
+.ab-schedule-container__toolbar__view-buttons {
+}
+
+.ab-schedule-container__day-toolbar {
+  @include flex-row-justify-align(20px, 100%, end, center);
+}
+
+.ab-schedule-container__day-toolbar__alignment {
+  @include flex-row-justify-align(20px, calc(100% - 100px), center, center);
+  //   border: solid green 1px;
+  //   margin-right: 6px;
+}
+
+.ab-schedule-container__day-toolbar__day {
+  @include flex-row-justify-align(100%, calc(100% / 7), center, center);
+
+  //   border: yellow 1px solid;
+}
+
+.ab-schedule-container__day-toolbar__day__container {
+  @include flex-row-justify-align(100%, 95%, space-between, center);
+  // border: yellow 1px solid;
+  font-size: 0.75em;
+
+  &__day {
+    font-size: 1em;
+    font-weight: bold;
+  }
+
+  &__date {
+    @include flex-row-justify-align(auto, 95%, end, center);
+    gap: 5px;
+
+    &__month {
+      @include flex-column-justify-align(100%, auto, end, center);
+
+      font-weight: bold;
+    }
+    &__day-number {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  }
+}
+
+.ab-schedule-container__time-blocks {
+  @include flex-row-justify-align(calc(100% - 120px), 100%, start, start);
+
+  // border:solid red 1px;
+  //   overflow: hidden scroll;
+  overflow: hidden auto;
+}
+
+.ab-schedule-container__time-blocks::-webkit-scrollbar {
+  width: 6px;
+  height: 12px;
+}
+
+.ab-schedule-container__time-blocks::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.ab-schedule-container__time-blocks::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.ab-schedule-container__time-blocks__day-column {
+  @include flex-column-justify-align(calc(200px * 24), 100%, start, center);
+  border-right: solid rgb(162, 162, 162) 1px;
+}
+
+.ab-schedule-container__time-blocks__times {
+  @include flex-column-justify-align(calc(200px * 24), 100px, start, center);
+}
+
+.ab-schedule-container__time-blocks__times__hour-tile {
+  @include flex-column-justify-align(200px, 100px, center, center);
+  border-bottom: solid rgb(162, 162, 162) 1px;
+  border-right: solid rgb(162, 162, 162) 1px;
+  font-size: .75em;
+}
+
+.ab-schedule-container__time-blocks-container {
+  @include flex-column-justify-align(calc(200px * 24), 100%, start, center);
+
+}
+
+.ab-schedule-container__time-blocks-container__day {
+  @include flex-column-justify-align(20px, 100%, center, center);
+}

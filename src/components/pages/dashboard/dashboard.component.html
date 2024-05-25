@@ -6,7 +6,9 @@
     <ab-project-tile [projectData]="project"> </ab-project-tile>
     }
   </section>
+  } @if(viewState()==="time"){
+  <section class="ab-dashboard__container__time">
+    <ab-schedule [date]="date"></ab-schedule>
+  </section>
   }
-
-
 </main>

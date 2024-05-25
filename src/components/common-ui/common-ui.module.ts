@@ -6,12 +6,14 @@ import { AbacusButtonsModule } from './abacus-buttons/abacus-buttons.module';
 import { MenuModule } from './menu/menu.module';
 import { TilesModule } from './tiles/tiles.module';
 import { SpinnerComponent } from './spinner/spinner.component';
+import { ScheduleComponent } from './schedule/schedule.component';
 
 
 
 @NgModule({
   declarations: [
-    SpinnerComponent
+    SpinnerComponent,
+    ScheduleComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +26,8 @@ import { SpinnerComponent } from './spinner/spinner.component';
     AbacusFormsModule,
     MenuModule,
     TilesModule,
-    SpinnerComponent
+    SpinnerComponent,
+    ScheduleComponent
   ]
 })
 export class CommonUiModule { }

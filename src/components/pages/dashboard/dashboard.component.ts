@@ -34,6 +34,8 @@ export class DashboardComponent implements OnInit {
 
   public projects!: ProjectData[];
   public viewState: WritableSignal<State> = signal(State.projects); // Initialize to a default state of the page, at this current time it is projects 
+  public date = new Date(); // the current day
+  
 
   stateChange = (state: string) => {
     console.log(state)
