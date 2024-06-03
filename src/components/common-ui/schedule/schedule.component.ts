@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, WritableSignal, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, WritableSignal, signal } from '@angular/core';
 
 enum ScheduleState {
   calendar = "calendar",
@@ -14,6 +14,9 @@ export class ScheduleComponent implements OnInit {
 
   @Input() date!: Date;
 
+  @Output() taskEvent: EventEmitter<{ [key: string]: string | number }>;
+
+
   public formattedDate!: string;
   public state: WritableSignal<ScheduleState> = signal(ScheduleState.day);
   public hoursArray: number[] = Array.from({ length: 24 }, (_, i) => i); // Creates an array [0, 1, 2, ..., 23]
@@ -23,7 +26,10 @@ export class ScheduleComponent implements OnInit {
   public currentMonth!: string;
   public currentDay!: string;
 
-  constructor() { }
+
+  constructor() {
+    this.taskEvent = new EventEmitter<{ [key: string]: string | number }>();
+  }
 
   ngOnInit(): void {
     const options: Intl.DateTimeFormatOptions = {
@@ -35,7 +41,7 @@ export class ScheduleComponent implements OnInit {
 
     this.formattedDate = this.date.toLocaleDateString('en-US', options);
     this.currentMonth = this.months[this.date.getMonth()];
-    
+
     this.calculateWeekDates();
   }
 
@@ -54,5 +60,13 @@ export class ScheduleComponent implements OnInit {
   getDay(day: string): number {
     const dayIndex = this.daysOfTheWeek.indexOf(day);
     return this.weekDayDates[dayIndex];
+  }
+
+
+  receiveTileData = (data: any) => {
+    console.log(data)
+    console.log('hello')
+    this.taskEvent.emit(data);
+    // need to pump this into the dialog
   }
 }

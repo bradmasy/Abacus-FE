@@ -9,7 +9,8 @@ import { AbacusBasicButtonComponent } from './abacus-basic-button/abacus-basic-b
     AbacusBasicButtonComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    
   ],
   exports:[
     AbacusBasicButtonComponent

@@ -16,10 +16,24 @@
         @for(day of daysOfTheWeek; track day){
         <div class="ab-schedule-container__day-toolbar__day">
           <div class="ab-schedule-container__day-toolbar__day__container">
-            <div class="ab-schedule-container__day-toolbar__day__container__day">{{ day }}</div>
-            <div  class="ab-schedule-container__day-toolbar__day__container__date">
-                <div  class="ab-schedule-container__day-toolbar__day__container__date__month">{{currentMonth}}</div>
-                <div  class="ab-schedule-container__day-toolbar__day__container__date__day-number">{{getDay(day)}}</div>
+            <div
+              class="ab-schedule-container__day-toolbar__day__container__day"
+            >
+              {{ day }}
+            </div>
+            <div
+              class="ab-schedule-container__day-toolbar__day__container__date"
+            >
+              <div
+                class="ab-schedule-container__day-toolbar__day__container__date__month"
+              >
+                {{ currentMonth }}
+              </div>
+              <div
+                class="ab-schedule-container__day-toolbar__day__container__date__day-number"
+              >
+                {{ getDay(day) }}
+              </div>
             </div>
           </div>
         </div>
@@ -50,7 +64,11 @@
     <div class="ab-schedule-container__time-blocks-container">
       <div class="ab-schedule-container__time-blocks__day-column">
         @for(hour of hoursArray; track hour){
-        <ab-schedule-tile [hour]="hour"></ab-schedule-tile>
+        <ab-schedule-tile
+          (tileInformation)="receiveTileData($event)"
+          [date]="day + '-' + currentMonth + '-' + getDay(day)"
+          [hour]="hour"
+        ></ab-schedule-tile>
         }
       </div>
     </div>

@@ -2,7 +2,6 @@
 
 :host {
   @include flex-column-justify-align(100%, 100%, center, center);
-  // border:solid pink 1px;
 }
 .ab-schedule-container {
   @include flex-column-justify-align(100%, 100%, start, center);

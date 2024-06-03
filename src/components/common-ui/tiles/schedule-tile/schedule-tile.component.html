@@ -1,6 +1,6 @@
 <div class="ab-schedule-tile-container">
-  <div id="hour-{{hour}}-0" class="ab-schedule-tile-container__block"></div>
-  <div id="hour-{{hour}}-1" class="ab-schedule-tile-container__block"></div>
-  <div id="hour-{{hour}}-2" class="ab-schedule-tile-container__block"></div>
-  <div id="hour-{{hour}}-3" class="ab-schedule-tile-container__block"></div>
+  <div id="hour-{{hour}}-0" class="ab-schedule-tile-container__block"  (click)="emitTileInformation(0)"></div>
+  <div id="hour-{{hour}}-1" class="ab-schedule-tile-container__block"  (click)="emitTileInformation(1)"></div>
+  <div id="hour-{{hour}}-2" class="ab-schedule-tile-container__block"  (click)="emitTileInformation(2)"></div>
+  <div id="hour-{{hour}}-3" class="ab-schedule-tile-container__block"  (click)="emitTileInformation(3)"></div>
 </div>

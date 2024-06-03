@@ -1,0 +1,29 @@
+<div class="ab-task-dialog__container">
+  <div class="ab-task-dialog__container__x-button">
+    <div class="ab-task-dialog__container__x-button__container" (click)="closeTask()">
+      <img src="../../../../assets/icons/x-button-100.png" />
+    </div>
+  </div>
+  <div class="ab-task-dialog__container__task-input">
+    <input placeholder="Enter your task here" />
+  </div>
+  <div class="ab-task-dialog__container__project">
+    <div class="ab-task-dialog__container__project__project-link">
+      <div class="ab-task-dialog__container__project__project-link__container">
+        <img src="../../../../assets/icons/add-90.png" />
+      </div>
+    </div>
+    <div>Link Project</div>
+  </div>
+  <div class="ab-task-dialog__container__times">
+    <div class="ab-task-dialog__container__times__input">
+      <input value="{{ taskData['startTime']}}" />
+    </div>
+    <div class="ab-task-dialog__container__times__input">
+      <input value="{{ taskData['endTime'] }}" />
+    </div>
+    <div class="ab-task-dialog__container__times__add-button">
+        <ab-button [text]="'Add Time'" ></ab-button>
+    </div>
+  </div>
+</div>

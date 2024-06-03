@@ -1,0 +1,103 @@
+@import "../../../../styles/index.scss";
+
+:host {
+  @include ab-container-shadow();
+  display: none; 
+  max-width: 300px;  
+  min-width: 300px;
+
+  position: absolute;
+  z-index: 1;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+:host.visible {
+    display: flex; // Show when the `visible` class is present
+  }
+
+.ab-task-dialog__container__x-button {
+  @include flex-row-justify-align(10px, auto, end, center);
+  // border:solid red 1px;
+
+  &__container {
+    @include flex-row-justify-align(100%, auto, end, center);
+    padding: 2px;
+    //border-radius: 4px;
+
+    img {
+      @include flex-row-justify-align(100%, 12px, end, center);
+    }
+  }
+
+  &__container:hover {
+    background-color: $main-blue;
+    img {
+      cursor: pointer;
+      filter: invert(100%);
+    }
+  }
+}
+
+.ab-task-dialog__container__task-input {
+  @include flex-row-justify-align(auto, auto, start, center);
+  padding: 15px 0px;
+}
+
+input {
+  background-color: rgb(241, 240, 242);
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  font-family: "main";
+}
+
+.ab-task-dialog__container__project {
+  @include flex-row-justify-align(13px, auto, start, center);
+  padding: 15px 0px;
+  gap: 5px;
+
+  &__project-link {
+    @include flex-row-justify-align(100%, auto, start, center);
+
+    &__container {
+      @include flex-row-justify-align(100%, auto, start, center);
+      padding: 2px;
+
+      img {
+        @include flex-row-justify-align(100%, auto, end, center);
+      }
+    }
+
+    &__container:hover {
+      background-color: $main-blue;
+
+      img {
+        cursor: pointer;
+        filter: invert(100%);
+      }
+    }
+  }
+}
+
+.ab-task-dialog__container__times {
+  @include flex-row-justify-align(auto, 100%, space-between, center);
+  gap: 10px;
+  padding: 5px 0px;
+
+  &__input {
+    @include flex-row-justify-align(100%, 25%, end, center);
+
+    input {
+      @include flex-row-justify-align(auto, 100%, end, center);
+      text-align: center;
+    }
+  }
+
+  &__add-button {
+    @include flex-row-justify-align(auto, 40%, end, center);
+  }
+}
