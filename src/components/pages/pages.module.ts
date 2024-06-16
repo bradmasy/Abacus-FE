@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { CommonUiModule } from '../common-ui/common-ui.module';
 import { AppModule } from '../../app/app.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PartialsModule } from '../partials/partials.module';
 
 
 
@@ -14,7 +15,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   ],
   imports: [
     CommonModule,
-    CommonUiModule
+    CommonUiModule,
+    PartialsModule
   ]
 })
 

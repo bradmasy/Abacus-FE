@@ -64,9 +64,9 @@
     <div class="ab-schedule-container__time-blocks-container">
       <div class="ab-schedule-container__time-blocks__day-column">
         @for(hour of hoursArray; track hour){
-        <ab-schedule-tile
+        <ab-schedule-tile #tile
           (tileInformation)="receiveTileData($event)"
-          [date]="day + '-' + currentMonth + '-' + getDay(day)"
+          [date]="convertDateStringToDate(day + '-' + currentMonth + '-' + getDay(day) + '-' + year)"
           [hour]="hour"
         ></ab-schedule-tile>
         }

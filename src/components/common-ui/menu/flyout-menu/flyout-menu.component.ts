@@ -10,7 +10,7 @@ import { State } from '../../../pages/dashboard/dashboard.component';
   styleUrl: './flyout-menu.component.scss'
 })
 export class FlyoutMenuComponent implements OnInit, AfterViewInit {
-  @ViewChildren("menuItem") menuItems!: QueryList<ElementRef>;;
+  @ViewChildren("menuItem") menuItems!: QueryList<ElementRef>;
   @ViewChild("projects") projectsState!: ElementRef;
   @ViewChild("dashboard") dashboardState!: ElementRef;
 
@@ -42,16 +42,12 @@ export class FlyoutMenuComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    console.log(this.projectsState)
     this.stateBehaviour.subscribe((state: string) => {
 
-
       this.state = state
-      console.log(this.menuItems)
       this.onStateChange(state);
 
       const menuItemArr = this.menuItems.toArray();
-      console.log(menuItemArr[0])
 
       // reset the colors of the other menu items to default
       menuItemArr.forEach((menuItem) => {

@@ -1,0 +1,7 @@
+@import "../../../styles/index.scss";
+:host {
+  @include flex-row-justify-align(100%, 100%, center, center);
+}
+.ab-dashboard__container__time {
+  @include flex-row-justify-align(100%, 100%, center, center);
+}

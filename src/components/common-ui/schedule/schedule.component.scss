@@ -117,3 +117,8 @@
 .ab-schedule-container__time-blocks-container__day {
   @include flex-column-justify-align(20px, 100%, center, center);
 }
+
+
+.booked{
+  background-color: $main-blue;
+}

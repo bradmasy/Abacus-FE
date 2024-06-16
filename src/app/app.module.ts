@@ -13,6 +13,7 @@ import { SsrCookieService } from 'ngx-cookie-service-ssr';
 import { CookieInitializationService } from '../services/cookieInitializer/cookie-initialization.service';
 import { MenuModule } from '../components/common-ui/menu/menu.module';
 import { HttpClientModule } from '@angular/common/http';
+import { PartialsModule } from '../components/partials/partials.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     CommonUiModule,
     PagesModule,
+    PartialsModule,
     AbacusFormsModule,
     MenuModule,
     HttpClientModule

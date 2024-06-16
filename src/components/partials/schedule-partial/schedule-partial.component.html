@@ -1,0 +1,14 @@
+<section class="ab-dashboard__container__time">
+  <ab-task-dialog
+    [display]="displayTask"
+    [taskData]="taskData()"
+    (taskBookingInformation)="taskDialogData($event)"
+  >
+  </ab-task-dialog>
+  <ab-schedule
+    (taskEvent)="receiveTask($event)"
+    [date]="date"
+    [timeBlocksSubject]="timeBlocksSubject"
+  >
+  </ab-schedule>
+</section>

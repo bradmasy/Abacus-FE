@@ -1,5 +1,7 @@
-import { Component, EventEmitter, OnInit, Output, WritableSignal, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, WritableSignal, inject, signal } from '@angular/core';
 import { ApiService } from '../../../services/api/api.service';
+import { EMPTY, catchError } from 'rxjs';
+import { DashboardService } from '../../../services/dashboard/dashboard.service';
 
 export type ProjectData = {
   id: string;
@@ -36,63 +38,86 @@ export class DashboardComponent implements OnInit {
   public viewState: WritableSignal<State> = signal(State.projects); // Initialize to a default state of the page, at this current time it is projects 
   public taskData: WritableSignal<{ [key: string]: string | number }> = signal({});
   public date = new Date(); // the current day
-
+  public dashboardService: DashboardService;
 
 
   stateChange = (state: string) => {
-    console.log(state)
     this.viewState.set(State[state as keyof typeof State]);
   }
 
   constructor(private api: ApiService) {
-
+    this.dashboardService = inject(DashboardService);
   }
 
   ngOnInit(): void {
+
+
     this.api.getProjectsForUser().subscribe({
       next: (success: any) => {
-        console.log(success)
         this.projects = success
-        console.log(this.projects)
       },
       error: (err) => {
         // error state
         console.log(err)
       }
     })
+
+    // this needs to be the start of the week
+
+  
+
   }
 
-  receiveTask(event: any) {
-    let minutes
 
-    switch (event["block"]) {
-      case 0:
-        minutes = 0;
-        break;
-      case 1:
-        minutes = 15;
-        break;
-      case 2:
-        minutes = 30;
-        break;
-      case 3:
-        minutes = 45
-        break
-      default:
-        minutes = 0;
-    }
+  receiveTask(data: any) {
+    console.log(data)
 
-    const amOrPm = event["hour"] < 12 ? event["hour"] === '24' ? 'AM' : 'AM' : 'PM'
-    const hour = event["hour"] === 0 ? 12 : event["hour"] > 12 ? event["hour"] - 12 : event["hour"];
-    console.log(hour)
-    
+    const timePattern = (/(\d+):(\d+)\s*(AM|PM)/i);
 
+    const startTimeParts = data["startTime"].match(timePattern);
+    const endTimeParts = data["endTime"].match(timePattern);
+
+    const startDate: Date = new Date(data["date"]);
+    const endDate: Date = new Date(data["date"]);
+
+    const startHour = startTimeParts[1];
+    const startMins = startTimeParts[2];
+
+    const endHour = endTimeParts[1];
+    const endMins = endTimeParts[2];
+
+    const startTime = startDate;
+    const endTime = endDate;
+
+    startTime.setUTCHours(startHour);
+    startTime.setUTCMinutes(startMins);
+
+    endTime.setUTCHours(endHour);
+    endTime.setUTCMinutes(endMins);
+
+    const task = data["task"] || null;
+    const projectId = data["projectId"] || null;
+
+    //const startTime =
     const body = {
-      startTime: `${hour}:${minutes === 0 ? '00' : minutes} ${amOrPm}`,
-      endTime: `${hour === 12 && minutes + 15 === 60 ? hour - 12 + 1: minutes + 15 === 60? hour + 1: hour}:${minutes + 15 === 60 ? '00' : minutes + 15} ${amOrPm}`
+      StartTime: startTime,
+      EndTime: endTime,
+      Task: task,
+      ProjectId: projectId
     }
+    //    make API call here
+    console.log(body)
+    this.api.createTimeBlock(body)
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          return EMPTY;
+        })
+      )
+      .subscribe((blocks) => {
+        console.log(blocks)
+      })
 
-    this.taskData.set(body); // sets the data for the form
-    this.displayTask.set(true); // will display the task form
+    // create a task dialog here and update the UI on booked data
   }
 }

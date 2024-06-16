@@ -10,8 +10,8 @@ import { SessionService } from '../session/session.service';
 })
 
 export class ApiService {
-  private apiUrl = 'https://time-backend-552bc6de8dc8.herokuapp.com';
-  // private apiUrl = 'http://localhost:5116';
+  // private apiUrl = 'https://time-backend-552bc6de8dc8.herokuapp.com';
+  private apiUrl = 'http://localhost:5116';
 
   constructor(private http: HttpClient, private session: SessionService) { }
 
@@ -117,6 +117,20 @@ export class ApiService {
 
   getCompanyById = (companyId: string) => {
     return this.http.get(`${this.apiUrl}/Company?companyId=${companyId}`, { headers: this.createHeader() });
+  }
+
+  // Time Blocks
+
+  getTimeBlock = (startDate: string): Observable<any> => {
+    return this.http.get(`${this.apiUrl}/TimeBlock?startTime=${startDate}`, { headers: this.createHeader() });
+
+  }
+
+  createTimeBlock = (body: { [key: string]: string | Date | null }): Observable<any> => {
+    body["userId"] = this.session.getUserId();
+    console.log(body)
+    return this.http.post(`${this.apiUrl}/TimeBlock`, body, { headers: this.createHeader() });
+
   }
 
 

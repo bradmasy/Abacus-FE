@@ -1,11 +1,14 @@
 <div class="ab-task-dialog__container">
   <div class="ab-task-dialog__container__x-button">
-    <div class="ab-task-dialog__container__x-button__container" (click)="closeTask()">
+    <div
+      class="ab-task-dialog__container__x-button__container"
+      (click)="closeTask()"
+    >
       <img src="../../../../assets/icons/x-button-100.png" />
     </div>
   </div>
   <div class="ab-task-dialog__container__task-input">
-    <input placeholder="Enter your task here" />
+    <input placeholder="Enter your task here" [formControl]="task" />
   </div>
   <div class="ab-task-dialog__container__project">
     <div class="ab-task-dialog__container__project__project-link">
@@ -13,17 +16,29 @@
         <img src="../../../../assets/icons/add-90.png" />
       </div>
     </div>
-    <div>Link Project</div>
+    <div>{{linkProjectText}}</div>
   </div>
   <div class="ab-task-dialog__container__times">
     <div class="ab-task-dialog__container__times__input">
-      <input value="{{ taskData['startTime']}}" />
+      <select value="{{ startTime }}" [formControl]="startTime">
+        @for(option of options; track option){
+        <option>
+          {{ option["label"] }}
+        </option>
+        }
+      </select>
     </div>
     <div class="ab-task-dialog__container__times__input">
-      <input value="{{ taskData['endTime'] }}" />
+      <select value="{{ endTime }}" [formControl]="endTime">
+        @for(option of options; track option){
+        <option>
+          {{ option["label"] }}
+        </option>
+        }
+      </select>
     </div>
     <div class="ab-task-dialog__container__times__add-button">
-        <ab-button [text]="'Add Time'" ></ab-button>
+      <ab-button [text]="'Add Time'" (click)="addTime()"></ab-button>
     </div>
   </div>
 </div>

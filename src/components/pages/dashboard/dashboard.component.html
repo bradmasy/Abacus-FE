@@ -7,11 +7,9 @@
     }
   </section>
   } @if(viewState()==="time"){
-  <section class="ab-dashboard__container__time">
-    <ab-task-dialog 
-    [display] ="displayTask"
-    [taskData]="taskData()"></ab-task-dialog>
-    <ab-schedule (taskEvent)="receiveTask($event)" [date]="date"></ab-schedule>
-  </section>
+  <ab-schedule-partial 
+  [date]="date"
+  (emitTaskData)="receiveTask($event)">
+  </ab-schedule-partial>
   }
 </main>

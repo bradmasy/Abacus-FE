@@ -55,6 +55,16 @@ input {
   font-family: "main";
 }
 
+select{
+  background-color: rgb(241, 240, 242);
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  font-family: "main";
+}
+
 .ab-task-dialog__container__project {
   @include flex-row-justify-align(13px, auto, start, center);
   padding: 15px 0px;
@@ -89,7 +99,7 @@ input {
   padding: 5px 0px;
 
   &__input {
-    @include flex-row-justify-align(100%, 25%, end, center);
+    @include flex-row-justify-align(100%, 40%, end, center);
 
     input {
       @include flex-row-justify-align(auto, 100%, end, center);
