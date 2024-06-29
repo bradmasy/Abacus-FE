@@ -57,7 +57,6 @@ export class FlyoutMenuComponent implements OnInit, AfterViewInit {
 
       switch (state) {
         case "dashboard":
-          console.log('dash')
           menuItemArr[0].nativeElement.style.backgroundColor = "blue";
           menuItemArr[0].nativeElement.style.color = "white";
           break;
@@ -89,7 +88,6 @@ export class FlyoutMenuComponent implements OnInit, AfterViewInit {
 
 
   changeState = (newState: string) => {
-    console.log(newState)
     this.stateBehaviour.next(newState);// = newState
   }
 

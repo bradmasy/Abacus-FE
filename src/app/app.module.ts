@@ -14,6 +14,7 @@ import { CookieInitializationService } from '../services/cookieInitializer/cooki
 import { MenuModule } from '../components/common-ui/menu/menu.module';
 import { HttpClientModule } from '@angular/common/http';
 import { PartialsModule } from '../components/partials/partials.module';
+import { ScheduleService } from '../services/schedule/schedule.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { PartialsModule } from '../components/partials/partials.module';
     MenuModule,
     HttpClientModule
   ],
-  providers: [ApiService, SessionService, SsrCookieService,
+  providers: [ApiService, SessionService, SsrCookieService, ScheduleService,
     {
       provide: APP_INITIALIZER,
       useFactory: (cookieInitializationService: CookieInitializationService) => () => cookieInitializationService.initializeCookies(),

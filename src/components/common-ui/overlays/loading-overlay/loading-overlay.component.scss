@@ -1,0 +1,39 @@
+@import "../../../../styles/index.scss";
+@keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+:host{
+    @include abacus-backgroung-gradient();
+
+    @include flex-column-justify-align(100%,100%,center,center);    
+    z-index: 3;
+    overflow: hidden;
+}
+
+// .ab-loading{
+//     @include flex-column-justify-align(100%,100%,center,center);
+//     @include abacus-backgroung-gradient();
+//     z-index: 3;
+// }
+
+.ab-loading-container{
+    @include flex-column-justify-align(100px,100px,center,center);
+    border: solid 3px;
+
+    border-color: $main-blue transparent $main-blue transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    z-index:2 ;
+}
+
+.ab-loading-container-img{
+    @include flex-column-justify-align(100px,100px,center,center);
+    position: relative;
+    img{
+        @include flex-column-justify-align(50%, 60%,center,center);
+
+    }
+}

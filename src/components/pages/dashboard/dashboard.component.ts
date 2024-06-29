@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output, WritableSignal, inject, signal
 import { ApiService } from '../../../services/api/api.service';
 import { EMPTY, catchError } from 'rxjs';
 import { DashboardService } from '../../../services/dashboard/dashboard.service';
+import { LoadingService } from '../../../services/loading/loading.service';
 
 export type ProjectData = {
   id: string;
@@ -32,14 +33,15 @@ export enum State {
 
 export class DashboardComponent implements OnInit {
 
-  // @Output() state: EventEmitter<string> = new EventEmitter<string>();
   public displayTask: WritableSignal<boolean> = signal(false);
+  //public loading: WritableSignal<boolean> = signal(true);
   public projects!: ProjectData[];
   public viewState: WritableSignal<State> = signal(State.projects); // Initialize to a default state of the page, at this current time it is projects 
   public taskData: WritableSignal<{ [key: string]: string | number }> = signal({});
   public date = new Date(); // the current day
   public dashboardService: DashboardService;
 
+  public loadingService:LoadingService = inject(LoadingService);
 
   stateChange = (state: string) => {
     this.viewState.set(State[state as keyof typeof State]);
@@ -64,7 +66,7 @@ export class DashboardComponent implements OnInit {
 
     // this needs to be the start of the week
 
-  
+
 
   }
 
@@ -76,22 +78,25 @@ export class DashboardComponent implements OnInit {
 
     const startTimeParts = data["startTime"].match(timePattern);
     const endTimeParts = data["endTime"].match(timePattern);
-
+    console.log(startTimeParts)
     const startDate: Date = new Date(data["date"]);
+    console.log(startDate)
     const endDate: Date = new Date(data["date"]);
+    const amOrPm = startTimeParts[3];
 
-    const startHour = startTimeParts[1];
+    const startHour = amOrPm === "AM" && parseInt(startTimeParts[1]) === 12 ? 0 : parseInt(startTimeParts[1]);
     const startMins = startTimeParts[2];
-
+    console.log(amOrPm)
     const endHour = endTimeParts[1];
     const endMins = endTimeParts[2];
 
     const startTime = startDate;
     const endTime = endDate;
-
+    console.log(startHour)
+    console.log(startMins)
     startTime.setUTCHours(startHour);
     startTime.setUTCMinutes(startMins);
-
+    console.log(startTime)
     endTime.setUTCHours(endHour);
     endTime.setUTCMinutes(endMins);
 
@@ -106,16 +111,20 @@ export class DashboardComponent implements OnInit {
       ProjectId: projectId
     }
     //    make API call here
+
     console.log(body)
+
+
     this.api.createTimeBlock(body)
       .pipe(
         catchError((err) => {
-          console.log(err);
           return EMPTY;
         })
       )
       .subscribe((blocks) => {
-        console.log(blocks)
+        // reload the page here
+        this.loadingService.loading.set(true);
+        // queue a reload of the schedule
       })
 
     // create a task dialog here and update the UI on booked data

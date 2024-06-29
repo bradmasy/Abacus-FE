@@ -29,8 +29,6 @@ export class LoginFormComponent {
   }
 
   onSubmit() {
-    console.log(this.loginForm.value)
-
     // validate and throw errors
     this.submitEvent.emit(this.loginForm.value)
   }

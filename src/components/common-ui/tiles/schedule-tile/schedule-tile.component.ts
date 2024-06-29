@@ -1,11 +1,15 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
-import { reduce } from 'rxjs';
+
+const QUARTERS = 4;
+const MINUTES_QTR_HOUR = 15;
+const SECONDS_HOUR = 60000;
 
 @Component({
   selector: 'ab-schedule-tile',
   templateUrl: './schedule-tile.component.html',
   styleUrl: './schedule-tile.component.scss'
 })
+
 export class ScheduleTileComponent implements OnInit {
 
   @Input() hour!: number;
@@ -13,14 +17,15 @@ export class ScheduleTileComponent implements OnInit {
 
   @Output() tileInformation: EventEmitter<{ [key: string]: string | number }>;
 
-  @ViewChildren('quarter') quarters!: QueryList<ElementRef>; 
+  @ViewChildren('quarter') quarters!: QueryList<ElementRef>;
 
   public id!: string;
-  public quarterHourBlockIds : string[] = [];
-  public enabled?:boolean;
+  public quarterHourBlockIds: string[] = [];
+  public enabled?: boolean;
   public enabledBlocks?: string[];
+  public position!: { top: number, left: number };
 
-  constructor() {
+  constructor(private elRef: ElementRef) {
 
     this.tileInformation = new EventEmitter<{ [key: string]: string | number }>();
   }
@@ -35,39 +40,49 @@ export class ScheduleTileComponent implements OnInit {
 
     const dateId = this.date
     dateId.setUTCHours(this.hour);
-    // console.log(`the id: ${dateId.toISOString()}`)
 
     this.id = dateId.toISOString();
 
-    // const newId = new Date(this.date.getTime() + 15 * 60000)
+    for (let i = 0; i < QUARTERS; i++) {
 
-    // newId.setUTCHours(this.hour);
-    // newId.toLocaleDateString('en-US', options);
-
-    for(let i= 0; i < 4; i++){
-      const newId = new Date(this.date.getTime() + (i * 15) * 60000)
+      const newId = new Date(this.date.getTime() + (i * MINUTES_QTR_HOUR) * SECONDS_HOUR)
       newId.setUTCHours(this.hour);
       newId.toLocaleDateString('en-US', options);
 
-      this.quarterHourBlockIds.push(newId.toISOString());// newId.toISOString();
+      this.quarterHourBlockIds.push(newId.toISOString());
 
     }
+
+    this.calculatePosition();
   }
 
-  setBookedBlock(id:string){
-    console.log(this.quarters);
-    const element = this.quarters.find((e:ElementRef) => {
-    // console.log(e)
-      // console.log(e.nativeElement.id)
+  calculatePosition(): void {
+    const rect = this.elRef.nativeElement.getBoundingClientRect();
+   // console.log(rect)
+    this.position = { top: rect.top , left: rect.left };
+  }
+
+  getPosition(): { [key: string]: number } {
+    return this.position;
+  };
+
+  getRect(){
+    return this.elRef.nativeElement.getBoundingClientRect();
+  }
+
+
+
+  setBookedBlock(id: string) {
+    const element = this.quarters.find((e: ElementRef) => {
+
       return e.nativeElement.id === id;
     })
 
-    // console.log('quart found')
-    if(element){
+    if (element) {
       element.nativeElement.style.backgroundColor = 'blue';
+      element.nativeElement.style.border = 'none';
     }
-    console.log(element);
-    
+
   }
   /**
    * Sends the data that represents the block of time on a given day that this tile represents

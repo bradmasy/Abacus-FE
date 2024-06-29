@@ -9,6 +9,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { TaskDialogComponent } from './dialogs/task-dialog/task-dialog.component';
+import { OverlaysModule } from './overlays/overlays.module';
 
 
 
@@ -24,6 +25,7 @@ import { TaskDialogComponent } from './dialogs/task-dialog/task-dialog.component
     MenuModule,
     TilesModule,
     DialogsModule,
+    OverlaysModule,
   ],
   exports: [
     AbacusFormsModule,
@@ -33,6 +35,7 @@ import { TaskDialogComponent } from './dialogs/task-dialog/task-dialog.component
     ScheduleComponent,
     DialogsModule,
     AbacusButtonsModule,
+    OverlaysModule,
   ]
 })
 export class CommonUiModule { }

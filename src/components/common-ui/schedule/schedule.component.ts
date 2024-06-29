@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Signal, ViewChildren, WritableSignal, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Signal, ViewChildren, ViewEncapsulation, WritableSignal, signal } from '@angular/core';
 import { TimeBlock } from '../../partials/schedule-partial/schedule-partial.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ScheduleTileComponent } from '../tiles/schedule-tile/schedule-tile.component';
@@ -8,15 +8,21 @@ enum ScheduleState {
   day = "day"
 }
 
+interface PositionData {
+  top: number;
+  left: number;
+  event: HTMLDivElement | undefined;
+}
 const REMOVE_TIMEZONE = -11;
 const REMOVE_MINUTES = -6;
 
 @Component({
   selector: 'ab-schedule',
   templateUrl: './schedule.component.html',
-  styleUrls: ['./schedule.component.scss']
+  styleUrls: ['./schedule.component.scss'],
 })
-export class ScheduleComponent implements OnInit {
+
+export class ScheduleComponent implements OnInit, AfterViewInit {
 
   @Input() date!: Date;
   @Input() timeBlocksSubject!: Subject<TimeBlock[]>;
@@ -24,7 +30,8 @@ export class ScheduleComponent implements OnInit {
   @Output() taskEvent: EventEmitter<{ [key: string]: string | number }>;
 
   @ViewChildren('tile') scheduleTiles!: QueryList<ScheduleTileComponent>;
-    
+  @ViewChildren('event') events!: QueryList<HTMLDivElement>;
+
   public formattedDate!: string;
   public state: WritableSignal<ScheduleState> = signal(ScheduleState.day);
   public hoursArray: number[] = Array.from({ length: 24 }, (_, i) => i); // Creates an array [0, 1, 2, ..., 23]
@@ -40,27 +47,13 @@ export class ScheduleComponent implements OnInit {
 
   constructor() {
     this.taskEvent = new EventEmitter<{ [key: string]: string | number }>();
+    console.log('schedule')
+  }
+  ngAfterViewInit(): void {
   }
 
-  // ngAfterViewInit(): void {
-  //   console.log(this.scheduleTiles)
-
-  //   const mappedScheduleTiles = this.scheduleTiles.reduce((acc: { [key: string]: ScheduleTileComponent }, tile: ScheduleTileComponent) => {
-  //     acc[tile.id] = tile;
-  //     return acc;
-  //   }, {});
-
-
-  //   // if (this.scheduleTiles) {
-  //   //   this.scheduleTiles.forEach((tile) => {
-  //   //     console.log(tile.id)
-  //   //   })
-  //   // }
-  // }
-
-
-
   ngOnInit(): void {
+
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
@@ -75,6 +68,7 @@ export class ScheduleComponent implements OnInit {
     this.calculateWeekDates();
 
     this.timeBlocksSubject.subscribe((data) => {
+      console.log(data)
       this.timeBlocks = data
       this.timeBlocksUpdateSubject.next(this.timeBlocks);// Dispatch signal when timeBlocks are updated
 
@@ -84,25 +78,24 @@ export class ScheduleComponent implements OnInit {
         return acc;
       }, {} as { [key: string]: ScheduleTileComponent });
 
-      console.log(this.timeBlocks)
       const timeBlockStartEndTimes = this.timeBlocks.map((block) => {
         return {
+
           start: block.startTime,
           end: block.endTime,
         }
       })
 
-      const timeBlockStartTimes = this.timeBlocks.map((block) => block.startTime)
       const mappedTileKeys = Object.keys(mappedScheduleTiles);
       const filteredBlocks: ScheduleTileComponent[] = [];
 
       let inRange = false;
-      for (let i = 0; i < timeBlockStartEndTimes.length; i++) {
 
-        const timeBlockStartId = timeBlockStartEndTimes[i].start.toString().slice(0, REMOVE_MINUTES);
-        const timeBlockEndId = timeBlockStartEndTimes[i].end.toString().slice(0, REMOVE_MINUTES);
+      for (let i = 0; i < this.timeBlocks.length; i++) {
 
-        console.log(timeBlockEndId)
+        const timeBlockStartId = this.timeBlocks[i].startTime.toString().slice(0, REMOVE_MINUTES);
+        const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
+
 
         for (let j = 0; j < mappedTileKeys.length; j++) {
 
@@ -126,60 +119,142 @@ export class ScheduleComponent implements OnInit {
 
       }
 
+      this.timeBlocks.forEach((eachTimeBlock) => {
 
+        const start = new Date(eachTimeBlock.startTime);
+        const end = new Date(eachTimeBlock.endTime);
 
-      filteredBlocks.forEach((eachBlock) => {
-        console.log(eachBlock)
-        // eachBlock.
-        eachBlock.enabled = true;
-
-      })
-
-      timeBlockStartEndTimes.forEach((eachTimeBlock) => {
-
-        const start = new Date(eachTimeBlock.start);
-        const end = new Date(eachTimeBlock.end);
-
+        const positionData: PositionData[] = [];
         filteredBlocks.forEach((eachBlock) => {
 
-          // const filteredQuarters = eachBlock.quarterHourBlockIds.filter((quarter) => {
 
-          //   const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
-          //   const convertedDateTime = new Date(formattedQuarter);
-  
-          //   if (convertedDateTime >= start && convertedDateTime < end) {
-          //     console.log(quarter); // Debugging log
-          //     return true;
-          //   }
-          //   return false;
-          // });
+          eachBlock.quarterHourBlockIds.forEach((quarter, index) => {
 
-          // console.log(filteredQuarters);
-
-          
-          eachBlock.quarterHourBlockIds.forEach((quarter) => {
             const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
             const convertedDateTime = new Date(formattedQuarter);
-    
 
-            if(convertedDateTime >= start && convertedDateTime < end){
-              
-              console.log(quarter)
-              eachBlock.setBookedBlock(quarter);
-            } 
-          })
+            if (convertedDateTime >= start && convertedDateTime < end) {
 
-          eachBlock.enabled = true;
-        });
+              const splitQuarter = quarter.split('-');
+              const dayNumber = splitQuarter[2].split('T')[0];
+              const idIndex = this.weekDayDates.findIndex((e) => e === parseInt(dayNumber));
+              const eventContainer = this.events.get(idIndex);
+
+              // this is the location of each block
+              const locationForDiv = eachBlock.getPosition();
+
+              const mergedLocationEventObject = {
+                top: locationForDiv['top'] + (index * 50), // to represent each block, there are 4 quarterblocks each at 50px
+                left: locationForDiv['left'],
+                event: eventContainer
+              }
+
+              positionData.push(mergedLocationEventObject);
+            }
+          });
+
+          console.log(positionData)
+
+
+        })
+
+        if (positionData.length !== 0) {
+
+          this.constructBlock(positionData, eachTimeBlock);
+
+        }
       });
     });
 
 
 
     this.timeBlocksUpdateSubject.subscribe((blocks) => {
-      // console.log('TIME BLOCKS')
+      console.log('TIME BLOCKS')
       // console.log(blocks);
     })
+  }
+
+  parseQuarterToTopPx(quarter: string): number {
+    const splitQuarter = quarter.split('T');
+    console.log(splitQuarter);
+    const splitTimeBlockFromQuarter = splitQuarter[1].split(':');
+    console.log(splitTimeBlockFromQuarter);
+    const hour = splitTimeBlockFromQuarter[0];
+    const min = splitTimeBlockFromQuarter[1]
+
+    let px = 0;
+    px += (50)
+    return 0;
+  }
+
+  calculateAmountOfBookedTimePerBlock(timeblock: TimeBlock) {
+
+    const totalBlockTime = new Date(timeblock.endTime).getTime() - new Date(timeblock.startTime).getTime();
+    const seconds = Math.floor(totalBlockTime / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    const remainingMinutes = minutes % 60;
+    const remainingSeconds = seconds % 60;
+    return `${remainingHours != 0 ? remainingHours : '00'}:${remainingMinutes != 0 ? remainingMinutes : '00'}:00`;
+  }
+
+  constructBlock(positionArray: PositionData[], timeblock: TimeBlock) {
+    console.log(positionArray)
+    if (positionArray.length === 0) {
+      return;
+    }
+    let minTop = Number.MAX_VALUE;
+    let maxTop = Number.MIN_VALUE;
+    let left = 0;
+
+    let heightPx = 0;
+
+    let validEventDiv: HTMLDivElement | undefined;
+
+
+    positionArray.forEach((position) => {
+      heightPx += 50;
+      if (position.top !== undefined && position.left !== undefined) {
+        if (position.top < minTop) {
+          minTop = position.top;
+          left = position.left;
+          if (position.event instanceof ElementRef) {
+            validEventDiv = position.event.nativeElement as HTMLDivElement;
+          } else {
+            validEventDiv = position.event as HTMLDivElement;
+          }
+        }
+        if (position.top > maxTop) {
+          maxTop = position.top;
+        }
+      }
+    });
+
+    if (validEventDiv) {
+
+      const newDiv = document.createElement('div');
+
+      newDiv.classList.add('ab-schedule-event');
+      newDiv.style.top = `${minTop - 121}px`;
+      newDiv.style.height = `${heightPx}px`;
+
+      if (timeblock.task) {
+        const innerHTML = `
+        <div class="ab-schedule-event__container">
+          <div class="ab-schedule-event__container__title">${timeblock.task.toUpperCase()}</div>
+          <div class="ab-schedule-event__container__time">${this.calculateAmountOfBookedTimePerBlock(timeblock)}</div>
+        </div
+        `
+        newDiv.innerHTML = innerHTML;
+
+      }
+      // Insert the new div into the event container
+      validEventDiv.appendChild(newDiv);
+    } else {
+      console.error("No valid eventDiv found for positionArray:", positionArray);
+    }
   }
 
   convertDateStringToDate = (date: string): Date => {
@@ -213,8 +288,6 @@ export class ScheduleComponent implements OnInit {
 
 
   receiveTileData = (data: any) => {
-    console.log(data)
-    console.log('hello')
     this.taskEvent.emit(data);
     // need to pump this into the dialog
   }

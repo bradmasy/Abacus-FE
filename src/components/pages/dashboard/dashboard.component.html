@@ -7,9 +7,8 @@
     }
   </section>
   } @if(viewState()==="time"){
-  <ab-schedule-partial 
-  [date]="date"
-  (emitTaskData)="receiveTask($event)">
+
+  <ab-schedule-partial [date]="date" (emitTaskData)="receiveTask($event)">
   </ab-schedule-partial>
   }
 </main>

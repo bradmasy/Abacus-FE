@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, WritableSignal, inject, signal } from '@angular/core';
 import { ApiService } from '../../../services/api/api.service';
-import { Subject } from 'rxjs';
+import { EMPTY, Subject, catchError } from 'rxjs';
+import { LoadingService } from '../../../services/loading/loading.service';
+import { ScheduleService } from '../../../services/schedule/schedule.service';
 
 export interface TimeBlock {
   id:string;
@@ -34,26 +36,35 @@ export class SchedulePartialComponent implements OnInit {
   public currentDay!: string;
   public year!: number;
   public timeBlocksSubject: Subject<TimeBlock[]> = new Subject<TimeBlock[]>();
- 
+  public loading:WritableSignal<boolean> = signal(true);
+
   public api: ApiService;
+  public loadingService: LoadingService = inject(LoadingService);
+  public scheduleService:ScheduleService = inject(ScheduleService);
 
   constructor() {
+    console.log('schedule partial')
     this.api = inject(ApiService);
+
   }
 
   ngOnInit(): void {
-
     this.calculateWeekDates();
     this.year = this.date.getFullYear();
     this.currentMonth = this.months[this.date.getMonth()];
 
     const startDate = new Date(`${this.currentMonth} ${this.weekDayDates[0]}, ${this.year}`);
-    console.log(startDate)
+    
+    startDate.setUTCHours(0);
+    startDate.setUTCMinutes(0); 
 
     this.api.getTimeBlock(startDate.toISOString())
       .subscribe((timeBlocks) => {
-        console.log(timeBlocks);
-        this.timeBlocksSubject.next(timeBlocks);
+        this.loadingService.loading.set(false);
+        setTimeout(()=>{
+          this.timeBlocksSubject.next(timeBlocks);
+
+        },500)
       })
   }
 
@@ -67,9 +78,9 @@ export class SchedulePartialComponent implements OnInit {
       date.setDate(startOfWeek.getDate() + index);
       return date.getDate();
     });
-    console.log(this.weekDayDates)
   }
 
+  // for the form
   receiveTask(event: any) {
     let minutes
 
@@ -92,7 +103,6 @@ export class SchedulePartialComponent implements OnInit {
 
     const amOrPm = event["hour"] < 12 ? event["hour"] === '24' ? 'AM' : 'AM' : 'PM'
     const hour = event["hour"] === 0 ? 12 : event["hour"] > 12 ? event["hour"] - 12 : event["hour"];
-    console.log(hour)
 
 
     const body = {
@@ -105,9 +115,22 @@ export class SchedulePartialComponent implements OnInit {
     this.displayTask.set(true); // will display the task form
   }
 
+  // the actual data being sent
 
   taskDialogData(data: { [key: string]: string | number }) {
-    console.log(data)
-    this.emitTaskData.emit(data);
+    this.scheduleService.createTimeBlock(data)
+    .pipe(
+      catchError( (err:Error) => {
+        console.error(err);
+        return EMPTY;
+      })
+    )
+    .subscribe((block) => {
+      this.loadingService.loading.set(true);
+      this.ngOnInit() // reload the component to dynamically update the UI with new
+
+    })
+
+    // this.emitTaskData.emit(data);
   }
 }

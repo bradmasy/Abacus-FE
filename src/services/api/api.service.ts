@@ -34,7 +34,6 @@ export class ApiService {
     // })
 
     const body = { Username: data['Username'], Password: data["Password"] };
-    console.log(body)
     return this.http.post(`${this.apiUrl}/auth/login`, body);
   }
 
@@ -128,7 +127,6 @@ export class ApiService {
 
   createTimeBlock = (body: { [key: string]: string | Date | null }): Observable<any> => {
     body["userId"] = this.session.getUserId();
-    console.log(body)
     return this.http.post(`${this.apiUrl}/TimeBlock`, body, { headers: this.createHeader() });
 
   }

@@ -46,7 +46,6 @@ export class HomeComponent {
         error: (err) => {
           this.loading.set(false)
 
-          console.log(err)
         }
       }
     )
