@@ -3,7 +3,7 @@
   <ab-loading-overlay></ab-loading-overlay>
   } @else{
   <ab-task-dialog
-    [display]="displayTask"
+    [display]="taskService.displayTask"
     [taskData]="taskData()"
     (taskBookingInformation)="taskDialogData($event)"
   >

@@ -1,0 +1,40 @@
+@import "../../../../styles/index.scss";
+
+:host {
+  @include flex-column-justify-align(auto, 100%, center, center);
+  position: absolute;
+  background-color: $main-blue;
+  opacity: 0.9;
+  z-index: 2;
+  border-radius: 8px;
+  font-size: 0.8em;
+  box-shadow: 0px 0px 5px 0px grey;
+  min-width: $min-width-schedule-col;
+  transition: 0.5s ease-in-out;
+
+  .ab-schedule-event {
+    @include flex-column-justify-align(100%, 100%, center, center);
+
+    .ab-schedule-event__container {
+      @include flex-column-justify-align(80%, 80%, space-between, center);
+
+      .ab-schedule-event__container__title {
+        @include flex-row-justify-align(auto, 100%, start, center);
+        font-weight: 600;
+      }
+
+      .ab-schedule-event__container__time {
+        @include flex-row-justify-align(auto, 100%, start, center);
+        font-weight: 600;
+
+      }
+    }
+  }
+  .ab-schedule-event__container:hover {
+  }
+}
+
+:host:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}

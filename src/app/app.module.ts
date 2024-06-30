@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule, ViewContainerRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,10 +15,11 @@ import { MenuModule } from '../components/common-ui/menu/menu.module';
 import { HttpClientModule } from '@angular/common/http';
 import { PartialsModule } from '../components/partials/partials.module';
 import { ScheduleService } from '../services/schedule/schedule.service';
+import { TaskService } from '../services/task/task.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,7 +31,7 @@ import { ScheduleService } from '../services/schedule/schedule.service';
     MenuModule,
     HttpClientModule
   ],
-  providers: [ApiService, SessionService, SsrCookieService, ScheduleService,
+  providers: [ApiService, SessionService, SsrCookieService, ScheduleService, TaskService,
     {
       provide: APP_INITIALIZER,
       useFactory: (cookieInitializationService: CookieInitializationService) => () => cookieInitializationService.initializeCookies(),

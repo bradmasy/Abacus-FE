@@ -14,8 +14,7 @@ export class SessionService {
    * Returns whether the session is live or not. A live session is defined as a user who is logged in the application.
    */
   isLive = (): boolean => {
-
-    return this.getUserId() === null || this.getUserId() != ''; // Check if user ID is defined
+    return this.getUserId() !== ''; 
   }
 
   /**

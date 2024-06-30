@@ -5,13 +5,15 @@ import { CommonUiModule } from '../common-ui/common-ui.module';
 import { AppModule } from '../../app/app.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PartialsModule } from '../partials/partials.module';
+import { PageOverlayDirective } from './page-overlay-directive/page-overlay.directive';
 
 
 
 @NgModule({
   declarations: [
     HomeComponent,
-    DashboardComponent
+    DashboardComponent,
+    PageOverlayDirective,
   ],
   imports: [
     CommonModule,

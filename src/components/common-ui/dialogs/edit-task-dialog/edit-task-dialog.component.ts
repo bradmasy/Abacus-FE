@@ -1,23 +1,15 @@
-import { Component, EventEmitter, HostBinding, Input, OnInit, Output, WritableSignal, signal } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output, WritableSignal, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Option } from '../task-dialog/task-dialog.component';
 import { HOURS, HOURS_IN_DAY, HOUR_INTERVAL, MINS_IN_INTERVAL, NOON } from '../constants';
 
-
-export interface Option {
-  label: string;
-  value: string;
-  default: boolean;
-}
-
 @Component({
-  selector: 'ab-task-dialog',
-  templateUrl: './task-dialog.component.html',
-  styleUrl: './task-dialog.component.scss',
+  selector: 'app-edit-task-dialog',
+  templateUrl: './edit-task-dialog.component.html',
+  styleUrl: './edit-task-dialog.component.scss'
 })
-
-export class TaskDialogComponent implements OnInit {
-
+export class EditTaskDialogComponent {
   @Input() taskData!: { [key: string]: string | number };
   @Input() display: WritableSignal<boolean> = signal(false);
 

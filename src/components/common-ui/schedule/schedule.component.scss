@@ -2,8 +2,8 @@
 
 :host {
   @include flex-column-justify-align(100%, 100%, center, center);
-
 }
+
 .ab-schedule-container {
   @include flex-column-justify-align(100%, 100%, start, center);
   // border:solid pink 1px;
@@ -13,6 +13,17 @@
   @include flex-column-justify-align(120px, 100%, space-between, center);
   border-bottom: solid rgb(162, 162, 162) 1px;
   //  background-color: $light-blue;
+}
+
+.ab-schedule-container__toolbar__statistics {
+  @include flex-column-justify-align(100%, 100%, center, start);
+
+  border: solid red 1px;
+  &__weekly-hours{
+    @include flex-column-justify-align(100%, 20%, center, center);
+    border: solid red 1px;
+
+  }
 }
 
 .ab-schedule-container__toolbar__tools {
@@ -32,17 +43,20 @@
 
 .ab-schedule-container__day-toolbar {
   @include flex-row-justify-align(20px, 100%, end, center);
+  min-width: calc(7 * $min-width-schedule-col + $min-width-schedule-time);
+
 }
 
 .ab-schedule-container__day-toolbar__alignment {
   @include flex-row-justify-align(20px, calc(100% - 100px), center, center);
   //   border: solid green 1px;
   //   margin-right: 6px;
+  min-width: calc(7 * $min-width-schedule-col);
 }
 
 .ab-schedule-container__day-toolbar__day {
   @include flex-row-justify-align(100%, calc(100% / 7), center, center);
-
+  min-width: 150px;
   //   border: yellow 1px solid;
 }
 
@@ -99,11 +113,12 @@
   @include flex-column-justify-align(calc(200px * 24), 100%, start, center);
   border-right: solid rgb(162, 162, 162) 1px;
   z-index: 1;
-
 }
 
 .ab-schedule-container__time-blocks__times {
   @include flex-column-justify-align(calc(200px * 24), 100px, start, center);
+  min-width: $min-width-schedule-time;
+
 }
 
 .ab-schedule-container__time-blocks__times__hour-tile {
@@ -116,6 +131,7 @@
 .ab-schedule-container__time-blocks-container {
   @include flex-column-justify-align(calc(200px * 24), 100%, start, center);
   position: relative;
+  min-width: $min-width-schedule-col;
 }
 
 // this is the overlay for events ------
@@ -125,12 +141,14 @@
   position: absolute;
   top: 0;
   left: 0;
+  min-width: $min-width-schedule-col;
 }
 
 // this is the overlay for events ------
 
 .ab-schedule-container__time-blocks-container__day {
   @include flex-column-justify-align(20px, 100%, center, center);
+  min-width: $min-width-schedule-col;
 }
 
 .booked {
@@ -140,26 +158,23 @@
 ::ng-deep .ab-schedule-event {
   @include flex-column-justify-align(auto, 100%, center, center);
   position: absolute;
-  background-color:$main-blue;
+  background-color: $main-blue;
   opacity: 0.9;
   z-index: 2;
   border-radius: 8px;
-  font-size: .8em;
+  font-size: 0.8em;
   box-shadow: 0px 0px 5px 0px grey;
-
-  .ab-schedule-event__container{
+  min-width: $min-width-schedule-col;
+  .ab-schedule-event__container {
     @include flex-column-justify-align(80%, 80%, space-between, center);
 
-    .ab-schedule-event__container__title{
+    .ab-schedule-event__container__title {
       @include flex-row-justify-align(auto, 100%, start, center);
       font-weight: 500;
     }
 
-    .ab-schedule-event__container__time{
+    .ab-schedule-event__container__time {
       @include flex-row-justify-align(auto, 100%, start, center);
-
     }
   }
 }
-
-

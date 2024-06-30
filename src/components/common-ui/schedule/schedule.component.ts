@@ -1,17 +1,25 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Signal, ViewChildren, ViewEncapsulation, WritableSignal, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Signal, ViewChildren, ViewContainerRef, ViewEncapsulation, WritableSignal, inject, signal } from '@angular/core';
 import { TimeBlock } from '../../partials/schedule-partial/schedule-partial.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ScheduleTileComponent } from '../tiles/schedule-tile/schedule-tile.component';
+import { ScheduleService } from '../../../services/schedule/schedule.service';
+import { EventDirective } from './event/event.directive';
 
 enum ScheduleState {
   calendar = "calendar",
   day = "day"
 }
 
-interface PositionData {
+// export interface PositionData {
+//   top: number;
+//   left: number;
+//   event: HTMLDivElement | EventDirective | undefined;
+// }
+
+export interface PositionData {
   top: number;
   left: number;
-  event: HTMLDivElement | undefined;
+  event:  EventDirective | undefined;
 }
 const REMOVE_TIMEZONE = -11;
 const REMOVE_MINUTES = -6;
@@ -22,7 +30,7 @@ const REMOVE_MINUTES = -6;
   styleUrls: ['./schedule.component.scss'],
 })
 
-export class ScheduleComponent implements OnInit, AfterViewInit {
+export class ScheduleComponent implements OnInit {
 
   @Input() date!: Date;
   @Input() timeBlocksSubject!: Subject<TimeBlock[]>;
@@ -31,6 +39,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   @ViewChildren('tile') scheduleTiles!: QueryList<ScheduleTileComponent>;
   @ViewChildren('event') events!: QueryList<HTMLDivElement>;
+  @ViewChildren(EventDirective) eventDirectives!: QueryList<EventDirective>;
 
   public formattedDate!: string;
   public state: WritableSignal<ScheduleState> = signal(ScheduleState.day);
@@ -44,16 +53,15 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   public timeBlocksUpdateSubject: BehaviorSubject<TimeBlock[]> = new BehaviorSubject<TimeBlock[]>([]);
 
   public timeBlocks: TimeBlock[] = [];
+  private scheduleService: ScheduleService = inject(ScheduleService);
 
-  constructor() {
+  constructor(private viewContainerRef: ViewContainerRef
+  ) {
     this.taskEvent = new EventEmitter<{ [key: string]: string | number }>();
-    console.log('schedule')
   }
-  ngAfterViewInit(): void {
-  }
+
 
   ngOnInit(): void {
-
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
@@ -68,7 +76,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     this.calculateWeekDates();
 
     this.timeBlocksSubject.subscribe((data) => {
-      console.log(data)
       this.timeBlocks = data
       this.timeBlocksUpdateSubject.next(this.timeBlocks);// Dispatch signal when timeBlocks are updated
 
@@ -138,8 +145,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
               const splitQuarter = quarter.split('-');
               const dayNumber = splitQuarter[2].split('T')[0];
               const idIndex = this.weekDayDates.findIndex((e) => e === parseInt(dayNumber));
-              const eventContainer = this.events.get(idIndex);
+              // const eventContainer = this.events.get(idIndex);
 
+              const eventContainer = this.eventDirectives.get(idIndex);
               // this is the location of each block
               const locationForDiv = eachBlock.getPosition();
 
@@ -153,15 +161,12 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
             }
           });
 
-          console.log(positionData)
-
-
         })
 
         if (positionData.length !== 0) {
 
-          this.constructBlock(positionData, eachTimeBlock);
-
+          // this.constructBlock(positionData, eachTimeBlock);
+          this.scheduleService.createTaskEventTileOnDOM(this.viewContainerRef, positionData, eachTimeBlock)
         }
       });
     });
@@ -169,7 +174,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
 
     this.timeBlocksUpdateSubject.subscribe((blocks) => {
-      console.log('TIME BLOCKS')
       // console.log(blocks);
     })
   }
@@ -200,62 +204,68 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     return `${remainingHours != 0 ? remainingHours : '00'}:${remainingMinutes != 0 ? remainingMinutes : '00'}:00`;
   }
 
-  constructBlock(positionArray: PositionData[], timeblock: TimeBlock) {
-    console.log(positionArray)
-    if (positionArray.length === 0) {
-      return;
-    }
-    let minTop = Number.MAX_VALUE;
-    let maxTop = Number.MIN_VALUE;
-    let left = 0;
+  // constructBlock(positionArray: PositionData[], timeblock: TimeBlock) {
+  //   console.log(positionArray)
+  //   if (positionArray.length === 0) {
+  //     return;
+  //   }
+  //   let minTop = Number.MAX_VALUE;
+  //   let maxTop = Number.MIN_VALUE;
+  //   let left = 0;
 
-    let heightPx = 0;
+  //   let heightPx = 0;
 
-    let validEventDiv: HTMLDivElement | undefined;
+  //   let validEventDiv: HTMLDivElement | undefined;
 
 
-    positionArray.forEach((position) => {
-      heightPx += 50;
-      if (position.top !== undefined && position.left !== undefined) {
-        if (position.top < minTop) {
-          minTop = position.top;
-          left = position.left;
-          if (position.event instanceof ElementRef) {
-            validEventDiv = position.event.nativeElement as HTMLDivElement;
-          } else {
-            validEventDiv = position.event as HTMLDivElement;
-          }
-        }
-        if (position.top > maxTop) {
-          maxTop = position.top;
-        }
-      }
-    });
+  //   positionArray.forEach((position) => {
+  //     heightPx += 50;
+  //     if (position.top !== undefined && position.left !== undefined) {
+  //       if (position.top < minTop) {
+  //         minTop = position.top;
+  //         left = position.left;
+  //         // if (position.event instanceof ElementRef) {
+  //         //   validEventDiv = position.event.nativeElement as HTMLDivElement;
+  //         // } else {
+  //         //   validEventDiv = position.event as HTMLDivElement;
+  //         // }
 
-    if (validEventDiv) {
+  //         if (position.event instanceof ElementRef) {
+  //           validEventDiv = position.event.nativeElement as HTMLDivElement;
+  //         } else {
+  //           validEventDiv = position.event as HTMLDivElement;
+  //         }
+  //       }
+  //       if (position.top > maxTop) {
+  //         maxTop = position.top;
+  //       }
+  //     }
+  //   });
 
-      const newDiv = document.createElement('div');
+  //   if (validEventDiv) {
 
-      newDiv.classList.add('ab-schedule-event');
-      newDiv.style.top = `${minTop - 121}px`;
-      newDiv.style.height = `${heightPx}px`;
+  //     const newDiv = document.createElement('div');
 
-      if (timeblock.task) {
-        const innerHTML = `
-        <div class="ab-schedule-event__container">
-          <div class="ab-schedule-event__container__title">${timeblock.task.toUpperCase()}</div>
-          <div class="ab-schedule-event__container__time">${this.calculateAmountOfBookedTimePerBlock(timeblock)}</div>
-        </div
-        `
-        newDiv.innerHTML = innerHTML;
+  //     newDiv.classList.add('ab-schedule-event');
+  //     newDiv.style.top = `${minTop - 121}px`;
+  //     newDiv.style.height = `${heightPx}px`;
 
-      }
-      // Insert the new div into the event container
-      validEventDiv.appendChild(newDiv);
-    } else {
-      console.error("No valid eventDiv found for positionArray:", positionArray);
-    }
-  }
+  //     if (timeblock.task) {
+  //       const innerHTML = `
+  //       <div class="ab-schedule-event__container">
+  //         <div class="ab-schedule-event__container__title">${timeblock.task.toUpperCase()}</div>
+  //         <div class="ab-schedule-event__container__time">${this.calculateAmountOfBookedTimePerBlock(timeblock)}</div>
+  //       </div
+  //       `
+  //       newDiv.innerHTML = innerHTML;
+
+  //     }
+  //     // Insert the new div into the event container
+  //     validEventDiv.appendChild(newDiv);
+  //   } else {
+  //     console.error("No valid eventDiv found for positionArray:", positionArray);
+  //   }
+  // }
 
   convertDateStringToDate = (date: string): Date => {
     const parts = date.split('-');

@@ -11,6 +11,7 @@
 .ab-dashboard__container{
     @include flex-row-justify-align(100%, 100%, center, center);
     // border:solid 1px blue;
+    min-width: $min-wd-dash-cont;
 }
 
 .ab-dashboard__container__projects{

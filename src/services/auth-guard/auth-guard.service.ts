@@ -16,8 +16,9 @@ export class AuthGuardService implements CanActivate {
    * @returns returns a boolean on whether the route should be deactivated or not.
    */
   canActivate(): boolean {
+    console.log(this.sessionService.isLive())
     if (!this.sessionService.isLive()) {
-      this.router.navigate(['/']); // Redirect to login page if not authenticated
+      this.router.navigate(['/']); 
       return false;
     }
     return true;

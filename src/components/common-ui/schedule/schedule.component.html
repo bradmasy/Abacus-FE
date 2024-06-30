@@ -4,6 +4,12 @@
       <div class="ab-schedule-container__toolbar__date">
         {{ formattedDate }}
       </div>
+      <div class="ab-schedule-container__toolbar__statistics">
+        statistics
+        <div class="ab-schedule-container__toolbar__statistics__weekly-hours">
+          Weekly Total: 9.5
+        </div>
+      </div>
       <div class="ab-schedule-container__toolbar__view-buttons">
         <ab-button [text]="'Calendar'"></ab-button>
         <ab-button [text]="'Day'"></ab-button>
@@ -77,7 +83,7 @@
         }
       </div>
       <!--the overlay for events aka time booked-->
-      <div #event
+      <div eventViewContainer #event="eventViewContainer"
        class="ab-schedule-container__time-blocks-container__event">
 
       </div>

@@ -10,6 +10,7 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { TaskDialogComponent } from './dialogs/task-dialog/task-dialog.component';
 import { OverlaysModule } from './overlays/overlays.module';
+import { EventDirective } from './schedule/event/event.directive';
 
 
 
@@ -17,6 +18,7 @@ import { OverlaysModule } from './overlays/overlays.module';
   declarations: [
     SpinnerComponent,
     ScheduleComponent,
+    EventDirective,
   ],
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { OverlaysModule } from './overlays/overlays.module';
     DialogsModule,
     AbacusButtonsModule,
     OverlaysModule,
+    EventDirective,
   ]
 })
 export class CommonUiModule { }

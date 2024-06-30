@@ -3,6 +3,7 @@ import { ApiService } from '../../../services/api/api.service';
 import { EMPTY, Subject, catchError } from 'rxjs';
 import { LoadingService } from '../../../services/loading/loading.service';
 import { ScheduleService } from '../../../services/schedule/schedule.service';
+import { TaskService } from '../../../services/task/task.service';
 
 export interface TimeBlock {
   id:string;
@@ -23,8 +24,6 @@ export interface TimeBlock {
 export class SchedulePartialComponent implements OnInit {
 
   @Input() date!: Date;
-
-
   @Output() emitTaskData: EventEmitter<{ [key: string]: string | number }> = new EventEmitter<{ [key: string]: string | number }>();
 
   public displayTask: WritableSignal<boolean> = signal(false);
@@ -41,6 +40,7 @@ export class SchedulePartialComponent implements OnInit {
   public api: ApiService;
   public loadingService: LoadingService = inject(LoadingService);
   public scheduleService:ScheduleService = inject(ScheduleService);
+  public taskService:TaskService = inject(TaskService)
 
   constructor() {
     console.log('schedule partial')
@@ -49,6 +49,8 @@ export class SchedulePartialComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadingService.loading.set(true); // queue the load
+
     this.calculateWeekDates();
     this.year = this.date.getFullYear();
     this.currentMonth = this.months[this.date.getMonth()];
@@ -63,7 +65,6 @@ export class SchedulePartialComponent implements OnInit {
         this.loadingService.loading.set(false);
         setTimeout(()=>{
           this.timeBlocksSubject.next(timeBlocks);
-
         },500)
       })
   }
@@ -112,7 +113,8 @@ export class SchedulePartialComponent implements OnInit {
     }
 
     this.taskData.set(body); // sets the data for the form
-    this.displayTask.set(true); // will display the task form
+    //this.displayTask.set(true); // will display the task form
+    this.taskService.displayOn();
   }
 
   // the actual data being sent
