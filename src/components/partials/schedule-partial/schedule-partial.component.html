@@ -10,6 +10,7 @@
   </ab-task-dialog>
   <ab-schedule
     (taskEvent)="receiveTask($event)"
+    (dateChangeEvent)="receiveDateChange($event)"
     [date]="date"
     [timeBlocksSubject]="timeBlocksSubject"
   >

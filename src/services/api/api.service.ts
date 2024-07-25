@@ -120,8 +120,8 @@ export class ApiService {
 
   // Time Blocks
 
-  getTimeBlock = (startDate: string): Observable<any> => {
-    return this.http.get(`${this.apiUrl}/TimeBlock?startTime=${startDate}`, { headers: this.createHeader() });
+  getTimeBlock = (startDate: string, endDate:string): Observable<any> => {
+    return this.http.get(`${this.apiUrl}/TimeBlock?startTime=${startDate}&endTime=${endDate}`, { headers: this.createHeader() });
 
   }
 

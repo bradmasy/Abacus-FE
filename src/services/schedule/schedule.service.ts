@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, inject, ViewContainerRef, ComponentRef } from '@angular/core';
+import { ElementRef, Injectable, inject, ViewContainerRef, ComponentRef, QueryList } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { LoadingService } from '../loading/loading.service';
 import { EMPTY, Observable, catchError } from 'rxjs';
@@ -7,6 +7,13 @@ import { PositionData } from '../../components/common-ui/schedule/schedule.compo
 import { TaskEventTileComponent } from '../../components/common-ui/tiles/task-event-tile/task-event-tile.component';
 import { EventDirective } from '../../components/common-ui/schedule/event/event.directive';
 
+
+enum daysOfTheWeek {
+  "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
+};
+
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,17 +21,20 @@ export class ScheduleService {
 
   private api: ApiService = inject(ApiService);
   private loadingService: LoadingService = inject(LoadingService);
-
+  private times: number[] = [];
   constructor() {
 
   }
 
+  resetTimes(){
+    this.times = [];
+  }
 
   public createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
-    console.log(positionArray)
     if (positionArray.length === 0) {
       return;
     }
+
     let minTop = Number.MAX_VALUE;
     let maxTop = Number.MIN_VALUE;
     let left = 0;
@@ -34,16 +44,20 @@ export class ScheduleService {
 
     positionArray.forEach((position) => {
       heightPx += 50;
+
       if (position.top !== undefined && position.left !== undefined) {
         if (position.top < minTop) {
+
           minTop = position.top;
           left = position.left;
+
           if (position.event instanceof ElementRef) {
-            validEventDiv = position.event.nativeElement// as HTMLDivElement;
+            validEventDiv = position.event.nativeElement;
           } else {
-            validEventDiv = position.event// as HTMLDivElement;
+            validEventDiv = position.event;
           }
         }
+
         if (position.top > maxTop) {
           maxTop = position.top;
         }
@@ -61,7 +75,7 @@ export class ScheduleService {
         validEventDiv.viewContainerRef.createComponent(TaskEventTileComponent);
 
       tileRef.instance.heightInPx = heightPx;
-      tileRef.instance.topInPx = minTop - 121
+      tileRef.instance.topInPx = minTop - 201
       tileRef.instance.timeblock = timeblock;
 
       if (timeblock.task) {
@@ -116,5 +130,58 @@ export class ScheduleService {
           return EMPTY;
         })
       )
+  }
+
+  calculateWeeklyTotalTime(weeklyDiv: ElementRef): void {
+    const total = this.times.reduce((acc, current) => acc + current, 0);
+    if (weeklyDiv) {
+      weeklyDiv.nativeElement.innerHTML= `<div>Weekly Time: ${total} Hours</div>`;
+    }
+  }
+
+  calculateTimes(timeblocks: TimeBlock[], timeDivs: QueryList<ElementRef>, weeklyDiv: ElementRef): void {
+    this.calculateTimePerDay(timeblocks, timeDivs);
+    this.calculateWeeklyTotalTime(weeklyDiv);
+  }
+
+  /**
+   * Calculates the total hours of logged time within a day for the user.
+   * 
+   * @param timeblocks 
+   * @param timeDivs 
+   */
+  calculateTimePerDay(timeblocks: TimeBlock[], timeDivs: QueryList<ElementRef>): void {
+    const calculatedTimeLoggedPerDay = timeDivs.toArray().reduce<{ [key: number]: number }>((acc, el, index) => {
+      acc[index] = 0;
+      return acc;
+    }, {});
+
+    const conversionFactor = (1000 * 60 * 60);
+
+    timeblocks.forEach((block: TimeBlock) => {
+      const start = new Date(block.startTime);
+      const end = new Date(block.endTime);
+      const dayIndex = start.getDay();
+      const timeInMs = (end.getTime() - start.getTime());
+      calculatedTimeLoggedPerDay[dayIndex] = calculatedTimeLoggedPerDay[dayIndex] += timeInMs;
+
+    })
+
+    Object.keys(calculatedTimeLoggedPerDay).forEach((key) => {
+      const dayIndex = parseInt(key, 10);
+      const el = timeDivs.toArray()[dayIndex];
+      const timeInHours = calculatedTimeLoggedPerDay[dayIndex] / conversionFactor;
+      this.times.push(timeInHours);
+      if (el) {
+        const elRef = el.nativeElement;
+        elRef.innerHTML = timeInHours > 0 ? `<div>Total Daily Hours: ${timeInHours.toFixed(2)}</div>` : `<div>No Hours Logged</div>`;
+      }
+    });
+  }
+
+
+
+  getTimeBlocks(){
+    
   }
 }

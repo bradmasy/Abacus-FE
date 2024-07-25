@@ -10,61 +10,91 @@
 }
 
 .ab-schedule-container__toolbar {
-  @include flex-column-justify-align(120px, 100%, space-between, center);
+  @include flex-column-justify-align(
+    $tool-bar-hgt,
+    100%,
+    space-between,
+    center
+  );
   border-bottom: solid rgb(162, 162, 162) 1px;
+
   //  background-color: $light-blue;
 }
 
 .ab-schedule-container__toolbar__statistics {
-  @include flex-column-justify-align(100%, 100%, center, start);
+  @include flex-column-justify-align(100px, 100%, center, start);
 
-  border: solid red 1px;
-  &__weekly-hours{
-    @include flex-column-justify-align(100%, 20%, center, center);
-    border: solid red 1px;
+  // border: solid red 1px;
+  &__alignment {
+    @include flex-column-justify-align(80%, 100%, start, start);
+    // border: solid red 1px;
 
+    &__toolbar {
+      @include flex-row-justify-align(20%, 100%, start, center);
+      // border: solid red 1px;
+      padding: 5px 0px;
+
+      &__title {
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      &__buttons {
+        @include flex-row-justify-align(100%, 100%, start, center);
+        gap: 5px;
+      }
+    }
   }
 }
 
 .ab-schedule-container__toolbar__tools {
-  @include flex-row-justify-align(100px, 100%, space-between, center);
-  //   border: solid green 1px;
+  @include flex-row-justify-align(
+    calc($tool-bar-hgt - $day-tool-bar-hgt),
+    100%,
+    start,
+    center
+  );
 }
 
 .ab-schedule-container__toolbar__date {
-  @include flex-row-justify-align(100px, auto, space-between, center);
+  @include flex-column-justify-align(100%, 20%, center, center);
   //  border:solid red 1px;
   padding: 0px 20px;
-  font-size: 1.5em;
-}
+  font-size: 1.25em;
+  gap: 10px;
+  min-width: 222px;
 
-.ab-schedule-container__toolbar__view-buttons {
+  &__day {
+    @include flex-row-justify-align(auto, 100%, start, start);
+  }
+
+  &__buttons {
+    @include flex-row-justify-align(auto, 100%, start, center);
+
+    gap: 5px;
+  }
 }
 
 .ab-schedule-container__day-toolbar {
-  @include flex-row-justify-align(20px, 100%, end, center);
+  @include flex-row-justify-align($day-tool-bar-hgt, 100%, end, center);
   min-width: calc(7 * $min-width-schedule-col + $min-width-schedule-time);
-
 }
 
 .ab-schedule-container__day-toolbar__alignment {
-  @include flex-row-justify-align(20px, calc(100% - 100px), center, center);
+  @include flex-row-justify-align(100%, calc(100% - 100px), center, center);
   //   border: solid green 1px;
   //   margin-right: 6px;
   min-width: calc(7 * $min-width-schedule-col);
 }
 
 .ab-schedule-container__day-toolbar__day {
-  @include flex-row-justify-align(100%, calc(100% / 7), center, center);
+  @include flex-column-justify-align(100%, calc(100% / 7), center, center);
   min-width: 150px;
-  //   border: yellow 1px solid;
 }
 
 .ab-schedule-container__day-toolbar__day__container {
-  @include flex-row-justify-align(100%, 95%, space-between, center);
-  // border: yellow 1px solid;
+  @include flex-row-justify-align(50%, 95%, space-between, center);
   font-size: 0.75em;
-
   &__day {
     font-size: 1em;
     font-weight: bold;
@@ -84,6 +114,11 @@
       font-weight: bold;
     }
   }
+}
+
+.ab-schedule-container__day-toolbar__day__hours-calculated {
+  @include flex-row-justify-align(50%, 95%, space-between, center);
+  font-size: 0.75em;
 }
 
 .ab-schedule-container__time-blocks {
@@ -118,7 +153,6 @@
 .ab-schedule-container__time-blocks__times {
   @include flex-column-justify-align(calc(200px * 24), 100px, start, center);
   min-width: $min-width-schedule-time;
-
 }
 
 .ab-schedule-container__time-blocks__times__hour-tile {

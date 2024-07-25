@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, WritableSignal, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, WritableSignal, effect, inject, signal } from '@angular/core';
 import { ApiService } from '../../../services/api/api.service';
 import { EMPTY, Subject, catchError } from 'rxjs';
 import { LoadingService } from '../../../services/loading/loading.service';
@@ -6,12 +6,12 @@ import { ScheduleService } from '../../../services/schedule/schedule.service';
 import { TaskService } from '../../../services/task/task.service';
 
 export interface TimeBlock {
-  id:string;
-  createdAt:Date;
-  endTime:Date;
-  startTime:Date;
-  task:string | null;
-  userId:string;
+  id: string;
+  createdAt: Date;
+  endTime: Date;
+  startTime: Date;
+  task: string | null;
+  userId: string;
   projectId: string | null;
 }
 
@@ -21,7 +21,7 @@ export interface TimeBlock {
   styleUrl: './schedule-partial.component.scss'
 })
 
-export class SchedulePartialComponent implements OnInit {
+export class SchedulePartialComponent implements OnInit, OnChanges {
 
   @Input() date!: Date;
   @Output() emitTaskData: EventEmitter<{ [key: string]: string | number }> = new EventEmitter<{ [key: string]: string | number }>();
@@ -30,58 +30,98 @@ export class SchedulePartialComponent implements OnInit {
   public taskData: WritableSignal<{ [key: string]: string | number }> = signal({});
   public daysOfTheWeek: string[] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
   public months: string[] = ["JAN", "FEB", "MAR", "APR", "MAY", "JUNE", "JULY", "AUG", "SEPT", "OCT", "NOV", "DEC"];
-  public weekDayDates: number[] = [];
+  public weekDayDates: Date[] = [];
   public currentMonth!: string;
   public currentDay!: string;
+  public changeDate = signal(false);
   public year!: number;
   public timeBlocksSubject: Subject<TimeBlock[]> = new Subject<TimeBlock[]>();
-  public loading:WritableSignal<boolean> = signal(true);
-
+  public loading: WritableSignal<boolean> = signal(true);
   public api: ApiService;
   public loadingService: LoadingService = inject(LoadingService);
-  public scheduleService:ScheduleService = inject(ScheduleService);
-  public taskService:TaskService = inject(TaskService)
+  public scheduleService: ScheduleService = inject(ScheduleService);
+  public taskService: TaskService = inject(TaskService)
+
+  private cdr: ChangeDetectorRef;
 
   constructor() {
-    console.log('schedule partial')
     this.api = inject(ApiService);
+    this.cdr = inject(ChangeDetectorRef)
 
+    effect(() => {
+      if (this.changeDate()) {
+        console.log('changed')
+        this.calculateWeekDates();
+        this.calculateDates();
+
+        const startDate = this.calculateDateTime(this.weekDayDates[0], 0, 0);
+        const endDate = this.calculateDateTime(this.weekDayDates[6], 23, 59)
+
+        this.getUpdatedTimeBlocks(startDate, endDate);
+        this.changeDate.set(false);
+      }
+    }, { allowSignalWrites: true })
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
+    if (changes['date']) {
+      console.log(changes)
+    }
+  }
+
+  calculateDateTime(startDate: Date, hours: number, mins: number) {
+    startDate.setHours(hours);
+    startDate.setMinutes(mins);
+    return startDate;
+  }
+  calculateDates() {
+    this.calculateWeekDates();
+    this.year = this.date.getFullYear();
+    this.currentMonth = this.months[this.date.getMonth()];
+
+  }
   ngOnInit(): void {
     this.loadingService.loading.set(true); // queue the load
 
     this.calculateWeekDates();
     this.year = this.date.getFullYear();
     this.currentMonth = this.months[this.date.getMonth()];
+    const startDate = this.weekDayDates[0];
+    const endDate = this.weekDayDates[6];
 
-    const startDate = new Date(`${this.currentMonth} ${this.weekDayDates[0]}, ${this.year}`);
-    
-    startDate.setUTCHours(0);
-    startDate.setUTCMinutes(0); 
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    endDate.setHours(23);
+    endDate.setMinutes(59);
 
-    this.api.getTimeBlock(startDate.toISOString())
+    this.getUpdatedTimeBlocks(startDate, endDate);
+  }
+
+  getUpdatedTimeBlocks(startDate: Date, endDate: Date) {
+    this.api.getTimeBlock(startDate.toDateString(), endDate.toDateString())
       .subscribe((timeBlocks) => {
+
         this.loadingService.loading.set(false);
-        setTimeout(()=>{
+        setTimeout(() => {
           this.timeBlocksSubject.next(timeBlocks);
-        },500)
+        }, 500)
       })
   }
 
   calculateWeekDates(): void {
     const currentDayIndex = this.date.getDay(); // 0 (Sunday) to 6 (Saturday)
     const startOfWeek = new Date(this.date);
+
     startOfWeek.setDate(this.date.getDate() - currentDayIndex);
 
     this.weekDayDates = this.daysOfTheWeek.map((_, index) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + index);
-      return date.getDate();
+      return date;
     });
   }
 
-  // for the form
   receiveTask(event: any) {
     let minutes
 
@@ -117,22 +157,26 @@ export class SchedulePartialComponent implements OnInit {
     this.taskService.displayOn();
   }
 
-  // the actual data being sent
-
   taskDialogData(data: { [key: string]: string | number }) {
     this.scheduleService.createTimeBlock(data)
-    .pipe(
-      catchError( (err:Error) => {
-        console.error(err);
-        return EMPTY;
+      .pipe(
+        catchError((err: Error) => {
+          console.error(err);
+          return EMPTY;
+        })
+      )
+      .subscribe((block) => {
+        this.loadingService.loading.set(true);
+        // this.ngOnInit() // reload the component to dynamically update the UI with new
       })
-    )
-    .subscribe((block) => {
-      this.loadingService.loading.set(true);
-      this.ngOnInit() // reload the component to dynamically update the UI with new
+  }
 
-    })
-
-    // this.emitTaskData.emit(data);
+  receiveDateChange(event: Date) {
+    console.log(this.date)
+    this.date = new Date(event.getTime()); // Ensure new reference
+    console.log(this.date)
+    //this.scheduleService.resetTimes();
+    this.changeDate.set(true);
+    this.cdr.detectChanges();
   }
 }

@@ -1,19 +1,26 @@
 <main class="ab-schedule-container">
   <div class="ab-schedule-container__toolbar">
+      <ab-navigation-bar 
+      [options]="navBarInputs">
+
+      </ab-navigation-bar>
+
+    
     <div class="ab-schedule-container__toolbar__tools">
       <div class="ab-schedule-container__toolbar__date">
-        {{ formattedDate }}
-      </div>
-      <div class="ab-schedule-container__toolbar__statistics">
-        statistics
-        <div class="ab-schedule-container__toolbar__statistics__weekly-hours">
-          Weekly Total: 9.5
+        <div class="ab-schedule-container__toolbar__date__day">
+          {{ formattedDate }}
+        </div>
+
+        <div class="ab-schedule-container__toolbar__date__buttons">
+          <ab-button [text]="'Previous'" (click)="changeWeek(-1)"></ab-button>
+          <ab-button [text]="'Next'" (click)="changeWeek(1)"></ab-button>
         </div>
       </div>
-      <div class="ab-schedule-container__toolbar__view-buttons">
-        <ab-button [text]="'Calendar'"></ab-button>
-        <ab-button [text]="'Day'"></ab-button>
-      </div>
+      <div
+        class="ab-schedule-container__toolbar__tools__weekly-hours"
+        #weeklyTotal
+      ></div>
     </div>
 
     @if(state() === "day"){
@@ -25,7 +32,7 @@
             <div
               class="ab-schedule-container__day-toolbar__day__container__day"
             >
-              {{ day }}
+              {{ getDateStringArray(day)[0].toUpperCase() }}
             </div>
             <div
               class="ab-schedule-container__day-toolbar__day__container__date"
@@ -33,15 +40,20 @@
               <div
                 class="ab-schedule-container__day-toolbar__day__container__date__month"
               >
-                {{ currentMonth }}
+                {{ getDateStringArray(day)[1].toUpperCase() }}
               </div>
               <div
                 class="ab-schedule-container__day-toolbar__day__container__date__day-number"
               >
-                {{ getDay(day) }}
+                {{ getDateStringArray(day)[2].toUpperCase() }}
               </div>
             </div>
           </div>
+          <div
+            class="ab-schedule-container__day-toolbar__day__hours-calculated"
+            id="'calculate-{{ day.toLowerCase() }}'"
+            #totalTime
+          ></div>
         </div>
         }
       </div>
@@ -67,7 +79,10 @@
       }
     </div>
     @for(day of daysOfTheWeek; track day){
-    <div class="ab-schedule-container__time-blocks-container">
+    <div
+      class="ab-schedule-container__time-blocks-container"
+      #timeBlockContainer
+    >
       <div class="ab-schedule-container__time-blocks__day-column">
         @for(hour of hoursArray; track hour){
         <ab-schedule-tile
@@ -83,12 +98,12 @@
         }
       </div>
       <!--the overlay for events aka time booked-->
-      <div eventViewContainer #event="eventViewContainer"
-       class="ab-schedule-container__time-blocks-container__event">
-
-      </div>
+      <div
+        eventViewContainer
+        #event="eventViewContainer"
+        class="ab-schedule-container__time-blocks-container__event"
+      ></div>
       <!--the overlay for events aka time booked-->
-
     </div>
     }
   </div>

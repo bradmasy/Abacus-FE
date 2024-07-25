@@ -1,0 +1,17 @@
+<div class="ab-navbar-container">
+  @for(option of options; track option){ @if(option.type === "dropdown"){
+  <div class="ab-navbar-container__option-menu__select">
+    <select>
+      <option disabled selected>{{ option.link }}</option>
+      @for(select of option.selectOptions; track select){
+      <option>{{ select.link }}</option>
+      }
+    </select>
+    <img class="drop-down"src="{{dropDownPth}}"/>
+  </div>
+  } @else{
+  <div class="ab-navbar-container__option-menu">
+    {{ option.link }}
+  </div>
+  } }
+</div>

@@ -1,0 +1,20 @@
+@import '../../../../styles/index.scss';
+
+:host{
+    font:"main"
+}
+
+.ab-icon-button-element{
+    font-family:"main";
+    border-radius: 4px;
+    padding:8px 15px;
+    outline: none;
+    border:none;
+    transition: 0.25s ease-in-out;
+}
+
+.ab-icon-button-element:hover{
+    cursor: pointer;
+    background-color: $royal-blue;
+    color:white;
+}
