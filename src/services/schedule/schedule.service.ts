@@ -13,7 +13,6 @@ enum daysOfTheWeek {
 };
 
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +21,8 @@ export class ScheduleService {
   private api: ApiService = inject(ApiService);
   private loadingService: LoadingService = inject(LoadingService);
   private times: number[] = [];
+  private eventTiles: ComponentRef<TaskEventTileComponent>[] = [];
+
   constructor() {
 
   }
@@ -31,10 +32,6 @@ export class ScheduleService {
   }
 
    createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
-    // console.log('creating task')
-    console.log(positionArray)
-    console.log(timeblock)
-    console.log(positionArray)
     if (positionArray.length === 0) {
       return;
     }
@@ -78,6 +75,7 @@ export class ScheduleService {
       const tileRef =
         validEventDiv.viewContainerRef.createComponent(TaskEventTileComponent);
 
+      this.eventTiles.push(tileRef);
       tileRef.instance.heightInPx = heightPx;
       tileRef.instance.topInPx = minTop - 201
       tileRef.instance.timeblock = timeblock;
@@ -88,7 +86,7 @@ export class ScheduleService {
     }
   }
 
-  public createTimeBlock(data: any): Observable<any> {
+  createTimeBlock(data: any): Observable<any> {
 
     const timePattern = (/(\d+):(\d+)\s*(AM|PM)/i);
 
@@ -191,6 +189,9 @@ export class ScheduleService {
   }
 
   destroyEvents(){
-    
+    this.loadingService.loadingOn();
+    this.eventTiles.forEach((tile) => {
+      tile.destroy();
+    })
   }
 }

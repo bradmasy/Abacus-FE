@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, WritableSignal } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, SimpleChanges, ViewChildren, WritableSignal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 const QUARTERS = 4;
@@ -11,7 +11,7 @@ const SECONDS_HOUR = 60000;
   styleUrl: './schedule-tile.component.scss'
 })
 
-export class ScheduleTileComponent implements OnInit {
+export class ScheduleTileComponent implements OnInit, OnDestroy {
 
   @Input() hour!: number;
   @Input() date!: WritableSignal<Date>;
@@ -37,12 +37,11 @@ export class ScheduleTileComponent implements OnInit {
   constructor(private elRef: ElementRef) {
 
     this.tileInformation = new EventEmitter<{ [key: string]: string | number }>();
-    // console.log(this.date());
-    // this.currentDate = this.date();
+
 
     effect(() => {
-      
-      if(this.date() !== this.currentDate && this.loaded){
+
+      if (this.date() !== this.currentDate && this.loaded) {
         console.log('setting up')
         this.setupTile();
 
@@ -53,11 +52,24 @@ export class ScheduleTileComponent implements OnInit {
     })
   }
 
+  ngOnDestroy(): void {
+    this.quarterHourBlockIds = [];
+
+    this.quarters.forEach((quarter) => {
+      quarter.nativeElement.style.backgroundColor = '';
+      quarter.nativeElement.style.border = '';
+    });
+
+    this.tileInformation.complete();
+  }
+
   ngOnInit(): void {
     this.setupTile();
   }
 
   setupTile() {
+    this.quarterHourBlockIds = [];
+
     const dateId = this.date()
     dateId.setUTCHours(this.hour);
 

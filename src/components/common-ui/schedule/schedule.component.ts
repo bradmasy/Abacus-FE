@@ -55,6 +55,7 @@ export class ScheduleComponent implements OnInit {
   public timeBlocksUpdateSubject: BehaviorSubject<TimeBlock[]> = new BehaviorSubject<TimeBlock[]>([]);
   public timeBlocks: TimeBlock[] = [];
   public loaded: boolean = false;
+  public currentDate!:string;
   public navBarInputs = [
     {
       link: "Views",
@@ -89,6 +90,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentDate = this.date().toLocaleDateString('en-US', this.options);
     this.createSchedule();
   }
 
@@ -128,14 +130,16 @@ export class ScheduleComponent implements OnInit {
           const timeBlockStartId = this.timeBlocks[i].startTime.toString().slice(0, REMOVE_MINUTES);
           const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
 
+          console.log(timeBlockStartId);
+          console.log(timeBlockEndId );
           for (let j = 0; j < mappedTileKeys.length; j++) {
 
             const mappedKey = mappedTileKeys[j].slice(0, REMOVE_TIMEZONE);
-
-            if (mappedKey === timeBlockEndId && !inRange) {
-              filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
-              break;
-            }
+            
+            // if (mappedKey === timeBlockEndId && !inRange) {
+            //   filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
+            //   break;
+            // }
 
             if (mappedKey === timeBlockStartId) {
               inRange = true;
@@ -143,6 +147,8 @@ export class ScheduleComponent implements OnInit {
 
             if (mappedKey === timeBlockEndId) {
               inRange = false;
+              filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
+              break;
             }
 
             if (inRange) {
@@ -151,6 +157,8 @@ export class ScheduleComponent implements OnInit {
           }
         }
 
+        console.log(filteredBlocks)
+
 
         this.timeBlocks.forEach((eachTimeBlock) => {
 
@@ -158,17 +166,19 @@ export class ScheduleComponent implements OnInit {
           const end = new Date(eachTimeBlock.endTime);
 
           const positionData: PositionData[] = [];
-          filteredBlocks.forEach((eachBlock) => {
-            // console.log(eachBlock)
+          filteredBlocks.forEach((eachBlock) => { // 2
             eachBlock.quarterHourBlockIds.forEach((quarter, index) => {
               console.log(quarter)
+              // the quarterhourblockids are not being reset but added
               const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
               const convertedDateTime = new Date(formattedQuarter);
+          
               if (convertedDateTime >= start && convertedDateTime < end) {
                 console.log(start);
                 console.log(end);
                 console.log(convertedDateTime)
                 console.log(eachBlock)
+
                 const splitQuarter = quarter.split('-');
                 const dayNumber = splitQuarter[2].split('T')[0];
 
@@ -189,6 +199,7 @@ export class ScheduleComponent implements OnInit {
 
                 const isDuplicateEntry = positionData.some((pos) => this.isDuplicate(pos, mergedLocationEventObject));
 
+//                console.log(isDuplicateEntry)
                 if (!isDuplicateEntry) {
                   positionData.push(mergedLocationEventObject);
                 }
@@ -197,6 +208,7 @@ export class ScheduleComponent implements OnInit {
 
           })
 
+          console.log(positionData)
           if (positionData.length !== 0) {
 
             this.scheduleService.createTaskEventTileOnDOM(this.viewContainerRef, positionData, eachTimeBlock)
@@ -279,6 +291,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   changeWeek(direction: number) {
+    this.scheduleService.destroyEvents();
     this.date.set(new Date(this.date().getTime()));
     this.date().setDate(this.date().getDate() + direction * 7);
     this.calculateWeekDates();
@@ -291,11 +304,13 @@ export class ScheduleComponent implements OnInit {
   }
 
   notifyScheduleTilesDateChange() {
+    console.log(this.scheduleTiles.length)
     this.scheduleTileDateSignals.forEach((dateSig) => {
       dateSig.set(this.date());
     })
 
   }
+
   destroyEvents() {
 
   }
