@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, WritableSignal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 const QUARTERS = 4;
 const MINUTES_QTR_HOUR = 15;
@@ -13,7 +14,7 @@ const SECONDS_HOUR = 60000;
 export class ScheduleTileComponent implements OnInit {
 
   @Input() hour!: number;
-  @Input() date!: Date;
+  @Input() date!: WritableSignal<Date>;
 
   @Output() tileInformation: EventEmitter<{ [key: string]: string | number }>;
 
@@ -24,30 +25,49 @@ export class ScheduleTileComponent implements OnInit {
   public enabled?: boolean;
   public enabledBlocks?: string[];
   public position!: { top: number, left: number };
+  public loaded = false;
+  public options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  public currentDate!: Date;
 
   constructor(private elRef: ElementRef) {
 
     this.tileInformation = new EventEmitter<{ [key: string]: string | number }>();
+    // console.log(this.date());
+    // this.currentDate = this.date();
+
+    effect(() => {
+      
+      if(this.date() !== this.currentDate && this.loaded){
+        console.log('setting up')
+        this.setupTile();
+
+      }
+
+      this.currentDate = this.date();
+      this.loaded = true;
+    })
   }
 
   ngOnInit(): void {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
+    this.setupTile();
+  }
 
-    const dateId = this.date
+  setupTile() {
+    const dateId = this.date()
     dateId.setUTCHours(this.hour);
 
     this.id = dateId.toISOString();
 
     for (let i = 0; i < QUARTERS; i++) {
 
-      const newId = new Date(this.date.getTime() + (i * MINUTES_QTR_HOUR) * SECONDS_HOUR)
+      const newId = new Date(this.date().getTime() + (i * MINUTES_QTR_HOUR) * SECONDS_HOUR)
       newId.setUTCHours(this.hour);
-      newId.toLocaleDateString('en-US', options);
+      newId.toLocaleDateString('en-US', this.options);
 
       this.quarterHourBlockIds.push(newId.toISOString());
 
@@ -56,17 +76,35 @@ export class ScheduleTileComponent implements OnInit {
     this.calculatePosition();
   }
 
+  calculateId(date: Date) {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    for (let i = 0; i < QUARTERS; i++) {
+
+      const newId = new Date(date.getTime() + (i * MINUTES_QTR_HOUR) * SECONDS_HOUR)
+      newId.setUTCHours(this.hour);
+      newId.toLocaleDateString('en-US', options);
+
+      this.quarterHourBlockIds.push(newId.toISOString());
+    }
+  }
+
   calculatePosition(): void {
     const rect = this.elRef.nativeElement.getBoundingClientRect();
-   // console.log(rect)
-    this.position = { top: rect.top , left: rect.left };
+    // console.log(rect)
+    this.position = { top: rect.top, left: rect.left };
   }
 
   getPosition(): { [key: string]: number } {
     return this.position;
   };
 
-  getRect(){
+  getRect() {
     return this.elRef.nativeElement.getBoundingClientRect();
   }
 
@@ -93,7 +131,7 @@ export class ScheduleTileComponent implements OnInit {
     const body = {
       'hour': this.hour,
       'block': block,
-      'date': this.date.toISOString()
+      'date': this.date().toISOString()
     }
     this.tileInformation.emit(body)
   }

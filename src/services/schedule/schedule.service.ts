@@ -30,7 +30,11 @@ export class ScheduleService {
     this.times = [];
   }
 
-  public createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
+   createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
+    // console.log('creating task')
+    console.log(positionArray)
+    console.log(timeblock)
+    console.log(positionArray)
     if (positionArray.length === 0) {
       return;
     }
@@ -172,6 +176,7 @@ export class ScheduleService {
       const el = timeDivs.toArray()[dayIndex];
       const timeInHours = calculatedTimeLoggedPerDay[dayIndex] / conversionFactor;
       this.times.push(timeInHours);
+
       if (el) {
         const elRef = el.nativeElement;
         elRef.innerHTML = timeInHours > 0 ? `<div>Total Daily Hours: ${timeInHours.toFixed(2)}</div>` : `<div>No Hours Logged</div>`;
@@ -182,6 +187,10 @@ export class ScheduleService {
 
 
   getTimeBlocks(){
+    
+  }
+
+  destroyEvents(){
     
   }
 }

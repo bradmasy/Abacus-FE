@@ -34,14 +34,14 @@ export enum State {
 export class DashboardComponent implements OnInit {
 
   public displayTask: WritableSignal<boolean> = signal(false);
-  //public loading: WritableSignal<boolean> = signal(true);
+
   public projects!: ProjectData[];
   public viewState: WritableSignal<State> = signal(State.projects); // Initialize to a default state of the page, at this current time it is projects 
   public taskData: WritableSignal<{ [key: string]: string | number }> = signal({});
-  public date = new Date(); // the current day
+  public date = signal(new Date()); // the current day
   public dashboardService: DashboardService;
 
-  public loadingService:LoadingService = inject(LoadingService);
+  public loadingService: LoadingService = inject(LoadingService);
 
   stateChange = (state: string) => {
     this.viewState.set(State[state as keyof typeof State]);

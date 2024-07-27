@@ -21,9 +21,9 @@ export interface TimeBlock {
   styleUrl: './schedule-partial.component.scss'
 })
 
-export class SchedulePartialComponent implements OnInit, OnChanges {
+export class SchedulePartialComponent implements OnInit {
 
-  @Input() date!: Date;
+  @Input() date!: WritableSignal<Date>;
   @Output() emitTaskData: EventEmitter<{ [key: string]: string | number }> = new EventEmitter<{ [key: string]: string | number }>();
 
   public displayTask: WritableSignal<boolean> = signal(false);
@@ -41,6 +41,7 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
   public loadingService: LoadingService = inject(LoadingService);
   public scheduleService: ScheduleService = inject(ScheduleService);
   public taskService: TaskService = inject(TaskService)
+  public onChanges = new Subject<SimpleChanges>();
 
   private cdr: ChangeDetectorRef;
 
@@ -50,7 +51,6 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
 
     effect(() => {
       if (this.changeDate()) {
-        console.log('changed')
         this.calculateWeekDates();
         this.calculateDates();
 
@@ -63,13 +63,6 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
     }, { allowSignalWrites: true })
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
-    if (changes['date']) {
-      console.log(changes)
-    }
-  }
-
   calculateDateTime(startDate: Date, hours: number, mins: number) {
     startDate.setHours(hours);
     startDate.setMinutes(mins);
@@ -77,16 +70,20 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
   }
   calculateDates() {
     this.calculateWeekDates();
-    this.year = this.date.getFullYear();
-    this.currentMonth = this.months[this.date.getMonth()];
+    this.year = this.date().getFullYear();
+    this.currentMonth = this.months[this.date().getMonth()];
 
   }
   ngOnInit(): void {
+    this.buildSchedule();
+  }
+
+  buildSchedule() {
     this.loadingService.loading.set(true); // queue the load
 
     this.calculateWeekDates();
-    this.year = this.date.getFullYear();
-    this.currentMonth = this.months[this.date.getMonth()];
+    this.year = this.date().getFullYear();
+    this.currentMonth = this.months[this.date().getMonth()];
     const startDate = this.weekDayDates[0];
     const endDate = this.weekDayDates[6];
 
@@ -110,10 +107,10 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
   }
 
   calculateWeekDates(): void {
-    const currentDayIndex = this.date.getDay(); // 0 (Sunday) to 6 (Saturday)
-    const startOfWeek = new Date(this.date);
+    const currentDayIndex = this.date().getDay(); // 0 (Sunday) to 6 (Saturday)
+    const startOfWeek = new Date(this.date());
 
-    startOfWeek.setDate(this.date.getDate() - currentDayIndex);
+    startOfWeek.setDate(this.date().getDate() - currentDayIndex);
 
     this.weekDayDates = this.daysOfTheWeek.map((_, index) => {
       const date = new Date(startOfWeek);
@@ -167,15 +164,12 @@ export class SchedulePartialComponent implements OnInit, OnChanges {
       )
       .subscribe((block) => {
         this.loadingService.loading.set(true);
-        // this.ngOnInit() // reload the component to dynamically update the UI with new
+        this.buildSchedule();
       })
   }
 
   receiveDateChange(event: Date) {
-    console.log(this.date)
-    this.date = new Date(event.getTime()); // Ensure new reference
-    console.log(this.date)
-    //this.scheduleService.resetTimes();
+    this.date.set(new Date(event.getTime())); // Ensure new reference
     this.changeDate.set(true);
     this.cdr.detectChanges();
   }

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, Query, QueryList, Signal, SimpleChanges, ViewChild, ViewChildren, ViewContainerRef, ViewEncapsulation, WritableSignal, inject, signal } from '@angular/core';
 import { TimeBlock } from '../../partials/schedule-partial/schedule-partial.component';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, take } from 'rxjs';
 import { ScheduleTileComponent } from '../tiles/schedule-tile/schedule-tile.component';
 import { ScheduleService } from '../../../services/schedule/schedule.service';
 import { EventDirective } from './event/event.directive';
@@ -26,9 +26,9 @@ const REMOVE_MINUTES = -6;
   styleUrls: ['./schedule.component.scss'],
 })
 
-export class ScheduleComponent implements OnInit, OnChanges {
+export class ScheduleComponent implements OnInit {
 
-  @Input() date!: Date;
+  @Input() date!: WritableSignal<Date>;
   @Input() timeBlocksSubject!: Subject<TimeBlock[]>;
   @Input() resetEmitSignal!: WritableSignal<Date>;
 
@@ -73,6 +73,13 @@ export class ScheduleComponent implements OnInit, OnChanges {
 
     }
   ]
+  public options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  public scheduleTileDateSignals: WritableSignal<Date>[] = [];
   private scheduleService: ScheduleService = inject(ScheduleService);
 
   constructor(private viewContainerRef: ViewContainerRef
@@ -82,146 +89,126 @@ export class ScheduleComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
-    
+    this.createSchedule();
+  }
+
+  createSchedule() {
     this.scheduleService.resetTimes();
-    this.formattedDate = this.date.toLocaleDateString('en-US', options);
-    this.year = this.date.getFullYear();
-    this.currentMonth = this.months[this.date.getMonth()];
+    this.formattedDate = this.date().toLocaleDateString('en-US', this.options);
+    this.year = this.date().getFullYear();
+    this.currentMonth = this.months[this.date().getMonth()];
 
     this.calculateWeekDates();
     this.getTimeBlocks();
-  
-
-    this.timeBlocksUpdateSubject.subscribe((blocks) => {
-      // console.log(blocks);
-    })
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['date'] && this.loaded) {
-      this.scheduleService.resetTimes();
-      this.hoursArray = Array.from({ length: 24 }, (_, i) => i); 
-      this.daysOfTheWeek = [...this.daysOfTheWeek]//_.cloneDeep(this.daysOfTheWeek);
-      this.calculateWeekDates();
-      this.getTimeBlocks();
-
-    }
   }
 
   getTimeBlocks() {
-    console.log('running time blocks')
     this.loaded = true;
-    this.timeBlocksSubject.subscribe((data) => {
-      this.timeBlocks = data
 
+    this.timeBlocksSubject
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.timeBlocks = data
+        this.timeBlocksUpdateSubject.next(this.timeBlocks);// Dispatch signal when timeBlocks are updated
+        this.scheduleService.calculateTimes(this.timeBlocks, this.totalTimes, this.weeklyTotal)
 
-      this.timeBlocksUpdateSubject.next(this.timeBlocks);// Dispatch signal when timeBlocks are updated
-      this.scheduleService.calculateTimes(this.timeBlocks, this.totalTimes, this.weeklyTotal)
+        const mappedScheduleTiles = this.scheduleTiles.reduce((acc: { [key: string]: ScheduleTileComponent }, tile: ScheduleTileComponent) => {
+          acc[tile.id] = tile;
 
-      const mappedScheduleTiles = this.scheduleTiles.reduce((acc: { [key: string]: ScheduleTileComponent }, tile: ScheduleTileComponent) => {
-        acc[tile.id] = tile;
+          return acc;
+        }, {} as { [key: string]: ScheduleTileComponent });
 
-        return acc;
-      }, {} as { [key: string]: ScheduleTileComponent });
+        const mappedTileKeys = Object.keys(mappedScheduleTiles);
+        const filteredBlocks: ScheduleTileComponent[] = [];
 
-      const mappedTileKeys = Object.keys(mappedScheduleTiles);
-      const filteredBlocks: ScheduleTileComponent[] = [];
+        let inRange = false;
 
-      let inRange = false;
+        for (let i = 0; i < this.timeBlocks.length; i++) {
 
-      for (let i = 0; i < this.timeBlocks.length; i++) {
+          const timeBlockStartId = this.timeBlocks[i].startTime.toString().slice(0, REMOVE_MINUTES);
+          const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
 
-        const timeBlockStartId = this.timeBlocks[i].startTime.toString().slice(0, REMOVE_MINUTES);
-        const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
+          for (let j = 0; j < mappedTileKeys.length; j++) {
 
-        console.log(timeBlockEndId)
-        console.log(timeBlockStartId)
-        for (let j = 0; j < mappedTileKeys.length; j++) {
+            const mappedKey = mappedTileKeys[j].slice(0, REMOVE_TIMEZONE);
 
-          const mappedKey = mappedTileKeys[j].slice(0, REMOVE_TIMEZONE);
-          console.log(mappedKey)
-          if (mappedKey === timeBlockEndId && !inRange) {
-            filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
-            break;
-          }
-
-          if (mappedKey === timeBlockStartId) { // once we find the start we can add all the blocks till the end
-            inRange = true;
-          }
-
-          if (mappedKey === timeBlockEndId) {
-
-            // stop adding the blocks for this one
-            inRange = false;
-          }
-
-          if (inRange) {
-            // any blocks that are within the start and end time on a timeblock are booked
-
-            filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
-          }
-        }
-      }
-
-      this.timeBlocks.forEach((eachTimeBlock) => {
-
-        console.log(eachTimeBlock)
-        const start = new Date(eachTimeBlock.startTime);
-        const end = new Date(eachTimeBlock.endTime);
-
-        const positionData: PositionData[] = [];
-        filteredBlocks.forEach((eachBlock) => {
-          eachBlock.quarterHourBlockIds.forEach((quarter, index) => {
-
-            const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
-            const convertedDateTime = new Date(formattedQuarter);
-
-            if (convertedDateTime >= start && convertedDateTime < end) {
-
-              const splitQuarter = quarter.split('-');
-              const dayNumber = splitQuarter[2].split('T')[0];
-
-              const idIndex = this.weekDayDates.findIndex((e) => {
-                const eachDateNum = e.toDateString().split(' ')[2]
-                return parseInt(eachDateNum) === parseInt(dayNumber)
-              });
-
-              const eventContainer = this.eventDirectives.get(idIndex);
-              // this is the location of each block
-              const locationForDiv = eachBlock.getPosition();
-
-              const mergedLocationEventObject = {
-                top: locationForDiv['top'] + (index * 50), // to represent each block, there are 4 quarterblocks each at 50px
-                left: locationForDiv['left'],
-                event: eventContainer
-              }
-              positionData.push(mergedLocationEventObject);
+            if (mappedKey === timeBlockEndId && !inRange) {
+              filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
+              break;
             }
-          });
 
-        })
-        console.log('here')
-        console.log(positionData)
-        if (positionData.length !== 0) {
-          console.log('redrawing')
-          this.scheduleService.createTaskEventTileOnDOM(this.viewContainerRef, positionData, eachTimeBlock)
+            if (mappedKey === timeBlockStartId) {
+              inRange = true;
+            }
+
+            if (mappedKey === timeBlockEndId) {
+              inRange = false;
+            }
+
+            if (inRange) {
+              filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
+            }
+          }
         }
-      });
 
-    });
+
+        this.timeBlocks.forEach((eachTimeBlock) => {
+
+          const start = new Date(eachTimeBlock.startTime);
+          const end = new Date(eachTimeBlock.endTime);
+
+          const positionData: PositionData[] = [];
+          filteredBlocks.forEach((eachBlock) => {
+            // console.log(eachBlock)
+            eachBlock.quarterHourBlockIds.forEach((quarter, index) => {
+              console.log(quarter)
+              const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
+              const convertedDateTime = new Date(formattedQuarter);
+              if (convertedDateTime >= start && convertedDateTime < end) {
+                console.log(start);
+                console.log(end);
+                console.log(convertedDateTime)
+                console.log(eachBlock)
+                const splitQuarter = quarter.split('-');
+                const dayNumber = splitQuarter[2].split('T')[0];
+
+                const idIndex = this.weekDayDates.findIndex((e) => {
+                  const eachDateNum = e.toDateString().split(' ')[2]
+                  return parseInt(eachDateNum) === parseInt(dayNumber)
+                });
+
+                const eventContainer = this.eventDirectives.get(idIndex);
+                // this is the location of each block
+                const locationForDiv = eachBlock.getPosition();
+
+                const mergedLocationEventObject = {
+                  top: locationForDiv['top'] + (index * 50), // to represent each block, there are 4 quarterblocks each at 50px
+                  left: locationForDiv['left'],
+                  event: eventContainer
+                }
+
+                const isDuplicateEntry = positionData.some((pos) => this.isDuplicate(pos, mergedLocationEventObject));
+
+                if (!isDuplicateEntry) {
+                  positionData.push(mergedLocationEventObject);
+                }
+              }
+            });
+
+          })
+
+          if (positionData.length !== 0) {
+
+            this.scheduleService.createTaskEventTileOnDOM(this.viewContainerRef, positionData, eachTimeBlock)
+          }
+        });
+
+      });
 
   }
 
-  calculateDailyHours(): number {
-
-
-    return 0;
+  isDuplicate(obj1: PositionData, obj2: PositionData): boolean {
+    return obj1.top === obj2.top && obj1.left === obj2.left && obj1.event === obj2.event;
   }
 
   parseQuarterToTopPx(quarter: string): number {
@@ -249,7 +236,8 @@ export class ScheduleComponent implements OnInit, OnChanges {
   }
 
 
-  convertDateStringToDate = (date: string): Date => {
+  convertDateStringToDate = (date: string): WritableSignal<Date> => {
+
     const parts = date.split('-');
     const month = parts[1];
     const day = parts[2];
@@ -257,14 +245,16 @@ export class ScheduleComponent implements OnInit, OnChanges {
 
     const formattedDateString = `${month} ${day}, ${year}`;
     const dateObject = new Date(formattedDateString);
+    const dateSignal = signal(dateObject);
+    this.scheduleTileDateSignals.push(dateSignal);
 
-    return dateObject;
+    return dateSignal;
   }
 
   calculateWeekDates(): void {
-    const currentDayIndex = this.date.getDay(); // 0 (Sunday) to 6 (Saturday)
-    const startOfWeek = new Date(this.date);
-    startOfWeek.setDate(this.date.getDate() - currentDayIndex);
+    const currentDayIndex = this.date().getDay(); // 0 (Sunday) to 6 (Saturday)
+    const startOfWeek = new Date(this.date());
+    startOfWeek.setDate(this.date().getDate() - currentDayIndex);
 
     this.weekDayDates = this.daysOfTheWeek.map((_, index) => {
       const date = new Date(startOfWeek);
@@ -286,16 +276,28 @@ export class ScheduleComponent implements OnInit, OnChanges {
 
   receiveTileData = (data: any) => {
     this.taskEvent.emit(data);
-    // need to pump this into the dialog
-
   }
 
   changeWeek(direction: number) {
-    this.date = new Date(this.date.getTime());
-    this.date.setDate(this.date.getDate() + direction * 7);  
+    this.date.set(new Date(this.date().getTime()));
+    this.date().setDate(this.date().getDate() + direction * 7);
     this.calculateWeekDates();
+    this.createSchedule();
 
-    this.dateChangeEvent.emit(this.date);
+    this.notifyScheduleTilesDateChange();
+
+    this.dateChangeEvent.emit(this.date());
+
+  }
+
+  notifyScheduleTilesDateChange() {
+    this.scheduleTileDateSignals.forEach((dateSig) => {
+      dateSig.set(this.date());
+    })
+
+  }
+  destroyEvents() {
+
   }
 
 }
