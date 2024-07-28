@@ -10,13 +10,17 @@ export class LoadingService {
     new BehaviorSubject<boolean>(false);
 
   public loading: WritableSignal<boolean> = signal(true);
-  loading$ = this.loadingSubject.asObservable();
 
   loadingOn() {
-    this.loadingSubject.next(true);
+    this.loading.set(true);
   }
 
   loadingOff() {
-    this.loadingSubject.next(false);
+    this.loading.set(false);
+
+  }
+
+  getLoading():boolean{
+    return this.loadingSubject.value;
   }
 }

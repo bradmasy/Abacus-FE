@@ -27,11 +27,11 @@ export class ScheduleService {
 
   }
 
-  resetTimes(){
+  resetTimes() {
     this.times = [];
   }
 
-   createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
+  createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
     if (positionArray.length === 0) {
       return;
     }
@@ -137,7 +137,7 @@ export class ScheduleService {
   calculateWeeklyTotalTime(weeklyDiv: ElementRef): void {
     const total = this.times.reduce((acc, current) => acc + current, 0);
     if (weeklyDiv) {
-      weeklyDiv.nativeElement.innerHTML= `<div>Weekly Time: ${total} Hours</div>`;
+      weeklyDiv.nativeElement.innerHTML = `<div>Weekly Time: ${total} Hours</div>`;
     }
   }
 
@@ -184,12 +184,15 @@ export class ScheduleService {
 
 
 
-  getTimeBlocks(){
-    
+  getTimeBlocks() {
+
   }
 
-  destroyEvents(){
+  destroyEvents() {
+    console.log(this.loadingService.loading())
     this.loadingService.loadingOn();
+    console.log(this.loadingService.loading())
+
     this.eventTiles.forEach((tile) => {
       tile.destroy();
     })

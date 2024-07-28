@@ -55,7 +55,7 @@ export class ScheduleComponent implements OnInit {
   public timeBlocksUpdateSubject: BehaviorSubject<TimeBlock[]> = new BehaviorSubject<TimeBlock[]>([]);
   public timeBlocks: TimeBlock[] = [];
   public loaded: boolean = false;
-  public currentDate!:string;
+  public currentDate!: string;
   public navBarInputs = [
     {
       link: "Views",
@@ -131,11 +131,11 @@ export class ScheduleComponent implements OnInit {
           const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
 
           console.log(timeBlockStartId);
-          console.log(timeBlockEndId );
+          console.log(timeBlockEndId);
           for (let j = 0; j < mappedTileKeys.length; j++) {
 
             const mappedKey = mappedTileKeys[j].slice(0, REMOVE_TIMEZONE);
-            
+
             // if (mappedKey === timeBlockEndId && !inRange) {
             //   filteredBlocks.push(mappedScheduleTiles[mappedTileKeys[j]]);
             //   break;
@@ -172,7 +172,7 @@ export class ScheduleComponent implements OnInit {
               // the quarterhourblockids are not being reset but added
               const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
               const convertedDateTime = new Date(formattedQuarter);
-          
+
               if (convertedDateTime >= start && convertedDateTime < end) {
                 console.log(start);
                 console.log(end);
@@ -199,7 +199,7 @@ export class ScheduleComponent implements OnInit {
 
                 const isDuplicateEntry = positionData.some((pos) => this.isDuplicate(pos, mergedLocationEventObject));
 
-//                console.log(isDuplicateEntry)
+                //                console.log(isDuplicateEntry)
                 if (!isDuplicateEntry) {
                   positionData.push(mergedLocationEventObject);
                 }
