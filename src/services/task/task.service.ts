@@ -4,24 +4,32 @@ import { TaskDialogComponent } from '../../components/common-ui/dialogs/task-dia
 @Injectable({
   providedIn: 'root'
 })
-export class TaskService{
+export class TaskService {
 
-  // @ViewChild(TaskDialogComponent) taskDialog!: ElementRef<TaskDialogComponent>
   public displayTask: WritableSignal<boolean> = signal(false);
+  public displayEditTask: WritableSignal<boolean> = signal(false);
+  public editData!: { [key: string]: string | number };
 
   constructor() { }
 
 
-  displayOn(){
+  displayOn() {
     this.displayTask.set(true);
   }
 
-  displayOff(){
+  displayOff() {
     this.displayTask.set(false)
   }
 
-  editTask(data:any){
+  editTask(data: any) {
     console.log(data);
-    // this.taskDialog.nativeElement.display.set(true);
+    this.displayEditTask.set(true);
+    this.editData = data
+    // this.displayTask.set(true);
+  }
+
+  displayEdit(){
+    
+    this.displayEditTask.set(true);
   }
 }

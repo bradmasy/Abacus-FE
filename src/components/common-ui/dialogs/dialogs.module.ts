@@ -21,7 +21,8 @@ import { EditTaskDialogComponent } from './edit-task-dialog/edit-task-dialog.com
     ReactiveFormsModule,
   ],
   exports: [
-    TaskDialogComponent
+    TaskDialogComponent,
+    EditTaskDialogComponent
   ]
 })
 export class DialogsModule { }

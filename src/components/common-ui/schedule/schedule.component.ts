@@ -130,8 +130,6 @@ export class ScheduleComponent implements OnInit {
           const timeBlockStartId = this.timeBlocks[i].startTime.toString().slice(0, REMOVE_MINUTES);
           const timeBlockEndId = this.timeBlocks[i].endTime.toString().slice(0, REMOVE_MINUTES);
 
-          console.log(timeBlockStartId);
-          console.log(timeBlockEndId);
           for (let j = 0; j < mappedTileKeys.length; j++) {
 
             const mappedKey = mappedTileKeys[j].slice(0, REMOVE_TIMEZONE);
@@ -157,9 +155,6 @@ export class ScheduleComponent implements OnInit {
           }
         }
 
-        console.log(filteredBlocks)
-
-
         this.timeBlocks.forEach((eachTimeBlock) => {
 
           const start = new Date(eachTimeBlock.startTime);
@@ -168,16 +163,11 @@ export class ScheduleComponent implements OnInit {
           const positionData: PositionData[] = [];
           filteredBlocks.forEach((eachBlock) => { // 2
             eachBlock.quarterHourBlockIds.forEach((quarter, index) => {
-              console.log(quarter)
-              // the quarterhourblockids are not being reset but added
+
               const formattedQuarter = quarter.slice(0, REMOVE_MINUTES + 1);
               const convertedDateTime = new Date(formattedQuarter);
 
-              if (convertedDateTime >= start && convertedDateTime < end) {
-                console.log(start);
-                console.log(end);
-                console.log(convertedDateTime)
-                console.log(eachBlock)
+              if (convertedDateTime >= start && convertedDateTime < end) {         
 
                 const splitQuarter = quarter.split('-');
                 const dayNumber = splitQuarter[2].split('T')[0];
@@ -199,7 +189,6 @@ export class ScheduleComponent implements OnInit {
 
                 const isDuplicateEntry = positionData.some((pos) => this.isDuplicate(pos, mergedLocationEventObject));
 
-                //                console.log(isDuplicateEntry)
                 if (!isDuplicateEntry) {
                   positionData.push(mergedLocationEventObject);
                 }
@@ -208,7 +197,6 @@ export class ScheduleComponent implements OnInit {
 
           })
 
-          console.log(positionData)
           if (positionData.length !== 0) {
 
             this.scheduleService.createTaskEventTileOnDOM(this.viewContainerRef, positionData, eachTimeBlock)
@@ -304,7 +292,6 @@ export class ScheduleComponent implements OnInit {
   }
 
   notifyScheduleTilesDateChange() {
-    console.log(this.scheduleTiles.length)
     this.scheduleTileDateSignals.forEach((dateSig) => {
       dateSig.set(this.date());
     })

@@ -4,8 +4,12 @@
         class="ab-task-dialog__container__x-button__container"
         (click)="closeTask()"
       >
+  
         <img src="../../../../assets/icons/x-button-100.png" />
       </div>
+    </div>
+    <div>
+      {{editTaskTitle}}
     </div>
     <div class="ab-task-dialog__container__task-input">
       <input placeholder="Enter your task here" [formControl]="task" />

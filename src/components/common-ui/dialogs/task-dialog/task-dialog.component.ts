@@ -32,6 +32,7 @@ export class TaskDialogComponent implements OnInit {
   public project: FormControl<string | null | number>;
   public linkProjectText = "Link Project";
 
+
   private taskSubject: BehaviorSubject<{ [key: string]: string | number }> = new BehaviorSubject<{ [key: string]: string | number }>(this.taskData);
   private taskObserver: Observable<{ [key: string]: string | number }> = this.taskSubject.asObservable();
 
@@ -121,5 +122,6 @@ export class TaskDialogComponent implements OnInit {
 
   editTask = (data:any) => {
     console.log(data)
+    
   }
 }

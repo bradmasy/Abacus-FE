@@ -150,7 +150,6 @@ export class SchedulePartialComponent implements OnInit {
     }
 
     this.taskData.set(body); // sets the data for the form
-    //this.displayTask.set(true); // will display the task form
     this.taskService.displayOn();
   }
 

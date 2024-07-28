@@ -8,6 +8,11 @@
     (taskBookingInformation)="taskDialogData($event)"
   >
   </ab-task-dialog>
+  <app-edit-task-dialog
+    [display]="taskService.displayEditTask"
+    [taskData]="taskService.editData"
+  >
+  </app-edit-task-dialog>
   <ab-schedule
     (taskEvent)="receiveTask($event)"
     (dateChangeEvent)="receiveDateChange($event)"
