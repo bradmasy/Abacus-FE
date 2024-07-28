@@ -79,6 +79,8 @@ export class ScheduleService {
       tileRef.instance.heightInPx = heightPx;
       tileRef.instance.topInPx = minTop - 201
       tileRef.instance.timeblock = timeblock;
+      tileRef.instance.taskStartTime = timeblock.startTime;
+      tileRef.instance.taskEndTime = timeblock.endTime;
 
       if (timeblock.task) {
         tileRef.instance.taskTitle = timeblock.task;

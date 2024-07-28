@@ -11,6 +11,8 @@
   <app-edit-task-dialog
     [display]="taskService.displayEditTask"
     [taskData]="taskService.editData"
+    (taskBookingInformation)="editTask($event)"
+
   >
   </app-edit-task-dialog>
   <ab-schedule

@@ -120,7 +120,7 @@ export class ApiService {
 
   // Time Blocks
 
-  getTimeBlock = (startDate: string, endDate:string): Observable<any> => {
+  getTimeBlock = (startDate: string, endDate: string): Observable<any> => {
     return this.http.get(`${this.apiUrl}/TimeBlock?startTime=${startDate}&endTime=${endDate}`, { headers: this.createHeader() });
 
   }
@@ -128,6 +128,14 @@ export class ApiService {
   createTimeBlock = (body: { [key: string]: string | Date | null }): Observable<any> => {
     body["userId"] = this.session.getUserId();
     return this.http.post(`${this.apiUrl}/TimeBlock`, body, { headers: this.createHeader() });
+
+  }
+
+
+  updateTimeBlock = (body: { [key: string]: string | Date | null }): Observable<any> => {
+    body["UserId"] = this.session.getUserId();
+    const { Id, ...updatedBody } = body;
+    return this.http.patch(`${this.apiUrl}/TimeBlock/${Id}`, updatedBody, { headers: this.createHeader() });
 
   }
 

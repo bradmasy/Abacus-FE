@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, inject } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, inject } from '@angular/core';
 import { TimeBlock } from '../../../partials/schedule-partial/schedule-partial.component';
 import { TaskService } from '../../../../services/task/task.service';
 
@@ -7,29 +7,44 @@ import { TaskService } from '../../../../services/task/task.service';
   templateUrl: './task-event-tile.component.html',
   styleUrl: './task-event-tile.component.scss'
 })
-export class TaskEventTileComponent {
+export class TaskEventTileComponent implements OnInit {
 
   topInPx!: number;
   taskTitle: string = '';
   taskStartTime!: Date;
   taskEndTime!: Date;
+  dateOfEvent!: Date;
 
   public heightInPx!: number;
   public timeblock!: TimeBlock;
 
-  private taskService:TaskService = inject(TaskService);
-  
-  constructor(){}
+  private taskService: TaskService = inject(TaskService);
+
+  constructor() { }
+
+  ngOnInit() {
+    const startDate = new Date(this.taskStartTime);
+    const endDate = new Date(this.taskEndTime);
+
+    startDate.setUTCHours(0);
+    startDate.setUTCMinutes(0);
+
+    endDate.setUTCHours(0);
+    endDate.setUTCMinutes(0);
+ 
+    if (startDate.getTime() === endDate.getTime()) {
+      this.dateOfEvent = startDate;
+    }
+  }
 
   editTask() {
-    console.log('editing...')
+    const data = { date: this.dateOfEvent.toISOString(), ...this.timeblock }
     
-    this.taskService.editTask(this.timeblock)    
-
+    this.taskService.editTask(data);
   }
 
   deleteTask() {
-
+    // TODO
   }
 
   calculateTotal() {
@@ -49,9 +64,9 @@ export class TaskEventTileComponent {
     return {
       'top': `${this.topInPx}px`,
       'height': `${this.heightInPx}px`,
-      // Add other styles as needed
     };
   }
+
   @HostBinding('style.top.px') get topStyle() {
     return this.topInPx;
   }

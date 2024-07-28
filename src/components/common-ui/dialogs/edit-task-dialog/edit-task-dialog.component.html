@@ -4,7 +4,6 @@
         class="ab-task-dialog__container__x-button__container"
         (click)="closeTask()"
       >
-  
         <img src="../../../../assets/icons/x-button-100.png" />
       </div>
     </div>
@@ -41,8 +40,11 @@
           }
         </select>
       </div>
-      <div class="ab-task-dialog__container__times__add-button">
-        <ab-button [text]="'Add Time'" (click)="addTime()"></ab-button>
+    </div>
+    <div class="ab-task-dialog__container__buttons">
+      <div class="ab-task-dialog__container__buttons__alignment">
+        <ab-button [text]="'Edit Task'" (click)="editTask()"></ab-button>
+        <ab-button [text]="'Delete Task'" (click)="deleteTask()"></ab-button>
       </div>
     </div>
   </div>

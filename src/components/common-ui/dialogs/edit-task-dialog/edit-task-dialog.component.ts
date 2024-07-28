@@ -1,8 +1,9 @@
-import { Component, EventEmitter, HostBinding, Input, Output, WritableSignal, signal } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output, WritableSignal, inject, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Option } from '../task-dialog/task-dialog.component';
 import { HOURS, HOURS_IN_DAY, HOUR_INTERVAL, MINS_IN_INTERVAL, NOON } from '../constants';
+import { TaskService } from '../../../../services/task/task.service';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -19,25 +20,29 @@ export class EditTaskDialogComponent {
   public taskForm: FormGroup;
   public startTime: FormControl;
   public endTime: FormControl;
+  public id: FormControl;
   public date: FormControl;
   public task: FormControl;
   public project: FormControl<string | null | number>;
-
   public linkProjectText = "Link Project";
   public editTaskTitle = "Edit Task";
 
   private taskSubject: BehaviorSubject<{ [key: string]: string | number }> = new BehaviorSubject<{ [key: string]: string | number }>(this.taskData);
   private taskObserver: Observable<{ [key: string]: string | number }> = this.taskSubject.asObservable();
 
-
+  private taskService: TaskService;
 
   @HostBinding('class.visible') get isVisible() {
     return this.display();
   }
 
   constructor() {
+
+    this.taskService = inject(TaskService);
+
     this.startTime = new FormControl('')
     this.endTime = new FormControl('')
+    this.id = new FormControl('')
     this.date = new FormControl('');
     this.task = new FormControl('');
     this.project = new FormControl(null);
@@ -72,9 +77,10 @@ export class EditTaskDialogComponent {
 
   ngOnInit(): void {
     this.taskForm = new FormGroup({
+      id: this.id,
       startTime: this.startTime,
       endTime: this.endTime,
-      date: this.date,
+      date:this.date,
       task: this.task,
       project: this.project
     })
@@ -82,17 +88,13 @@ export class EditTaskDialogComponent {
     this.taskObserver.subscribe((data) => {
 
       if (Object.keys(data).length > 0) {
-        
-
         const startValue = this.getTimeValue(new Date(data['startTime']));
-        console.log(startValue)
         const endValue = this.getTimeValue(new Date(data['endTime']));
-     
-          this.startTime.setValue(startValue);
+        this.id.setValue(data['id'])
+        this.date.setValue(data['date'])
+        this.startTime.setValue(startValue);
         this.endTime.setValue(endValue);
-        // this.project.setValue(data['project'] || null);
         this.task.setValue(data['task'] || null);
-        //  this.date.setValue(data['date'])
       }
     })
 
@@ -100,8 +102,8 @@ export class EditTaskDialogComponent {
     this.taskData
   }
 
-  getTimeValue(date:Date):string{
-    
+  getTimeValue(date: Date): string {
+
     let hours = date.getHours();
     let minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -135,6 +137,7 @@ export class EditTaskDialogComponent {
 
     return min;
   }
+
   ngOnChanges(): void {
     if (this.taskData) {
       this.taskSubject.next(this.taskData);
@@ -145,13 +148,13 @@ export class EditTaskDialogComponent {
     this.display.set(false);
   }
 
-  addTime = () => {
-
-    this.taskBookingInformation.emit(this.taskForm.value)
+  editTask = () => {
+    // this.taskService.updateTask(this.taskForm.value);
+    this.taskBookingInformation.emit(this.taskForm.value);
     this.closeTask();
   }
 
-  editTask = (data: any) => {
-    console.log(data)
+  deleteTask() {
+
   }
 }

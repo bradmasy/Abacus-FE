@@ -142,7 +142,6 @@ export class SchedulePartialComponent implements OnInit {
     const amOrPm = event["hour"] < 12 ? event["hour"] === '24' ? 'AM' : 'AM' : 'PM'
     const hour = event["hour"] === 0 ? 12 : event["hour"] > 12 ? event["hour"] - 12 : event["hour"];
 
-
     const body = {
       date: event["date"],
       startTime: `${hour}:${minutes === 0 ? '00' : minutes} ${amOrPm}`,
@@ -154,15 +153,15 @@ export class SchedulePartialComponent implements OnInit {
   }
 
   taskDialogData(data: { [key: string]: string | number }) {
-    this.scheduleService.createTimeBlock(data)
+    this.taskService.createTimeBlock(data)
       .pipe(
         catchError((err: Error) => {
           console.error(err);
           return EMPTY;
         })
       )
-      .subscribe((block) => {
-        this.loadingService.loading.set(true);
+      .subscribe(() => {
+        this.loadingService.loadingOn()
         this.buildSchedule();
       })
   }
@@ -171,5 +170,19 @@ export class SchedulePartialComponent implements OnInit {
     this.date.set(new Date(event.getTime())); // Ensure new reference
     this.changeDate.set(true);
     this.cdr.detectChanges();
+  }
+
+
+  editTask(event: { [key: string]: string | number }) {
+    this.taskService.updateTask(event) .pipe(
+      catchError((err: Error) => {
+        console.error(err);
+        return EMPTY;
+      })
+    )
+    .subscribe(() => {
+      this.loadingService.loadingOn()
+      this.buildSchedule();
+    })
   }
 }
