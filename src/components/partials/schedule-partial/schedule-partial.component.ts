@@ -68,6 +68,7 @@ export class SchedulePartialComponent implements OnInit {
     startDate.setMinutes(mins);
     return startDate;
   }
+  
   calculateDates() {
     this.calculateWeekDates();
     this.year = this.date().getFullYear();

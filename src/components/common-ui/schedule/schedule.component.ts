@@ -43,7 +43,6 @@ export class ScheduleComponent implements OnInit {
   @ViewChildren('timeBlockContainer') timeBlocksContainers!: QueryList<ElementRef>;
   @ViewChildren('totalTime') totalTimes!: QueryList<ElementRef>;
 
-  public formattedDate!: string;
   public state: WritableSignal<ScheduleState> = signal(ScheduleState.day);
   public hoursArray: number[] = Array.from({ length: 24 }, (_, i) => i); // Creates an array [0, 1, 2, ..., 23]
   public daysOfTheWeek: string[] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
@@ -90,13 +89,13 @@ export class ScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentDate = this.date().toLocaleDateString('en-US', this.options);
+    this.scheduleService.setActiveDate(this.date().toLocaleDateString('en-US', this.options));
+    this.currentDate = this.scheduleService.getActiveDate();
     this.createSchedule();
   }
 
   createSchedule() {
     this.scheduleService.resetTimes();
-    this.formattedDate = this.date().toLocaleDateString('en-US', this.options);
     this.year = this.date().getFullYear();
     this.currentMonth = this.months[this.date().getMonth()];
 

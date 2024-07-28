@@ -3,7 +3,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Option } from '../task-dialog/task-dialog.component';
 import { HOURS, HOURS_IN_DAY, HOUR_INTERVAL, MINS_IN_INTERVAL, NOON } from '../constants';
-import { TaskService } from '../../../../services/task/task.service';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -30,16 +29,11 @@ export class EditTaskDialogComponent {
   private taskSubject: BehaviorSubject<{ [key: string]: string | number }> = new BehaviorSubject<{ [key: string]: string | number }>(this.taskData);
   private taskObserver: Observable<{ [key: string]: string | number }> = this.taskSubject.asObservable();
 
-  private taskService: TaskService;
-
   @HostBinding('class.visible') get isVisible() {
     return this.display();
   }
 
   constructor() {
-
-    this.taskService = inject(TaskService);
-
     this.startTime = new FormControl('')
     this.endTime = new FormControl('')
     this.id = new FormControl('')
@@ -80,7 +74,7 @@ export class EditTaskDialogComponent {
       id: this.id,
       startTime: this.startTime,
       endTime: this.endTime,
-      date:this.date,
+      date: this.date,
       task: this.task,
       project: this.project
     })
@@ -149,7 +143,6 @@ export class EditTaskDialogComponent {
   }
 
   editTask = () => {
-    // this.taskService.updateTask(this.taskForm.value);
     this.taskBookingInformation.emit(this.taskForm.value);
     this.closeTask();
   }

@@ -42,9 +42,7 @@ export class ScheduleTileComponent implements OnInit, OnDestroy {
     effect(() => {
 
       if (this.date() !== this.currentDate && this.loaded) {
-        console.log('setting up')
         this.setupTile();
-
       }
 
       this.currentDate = this.date();

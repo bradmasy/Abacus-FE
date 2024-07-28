@@ -22,6 +22,7 @@ export class ScheduleService {
   private loadingService: LoadingService = inject(LoadingService);
   private times: number[] = [];
   private eventTiles: ComponentRef<TaskEventTileComponent>[] = [];
+  private activeDate:string = ''
 
   constructor() {
 
@@ -29,6 +30,20 @@ export class ScheduleService {
 
   resetTimes() {
     this.times = [];
+  }
+
+  getActiveDate():string{
+    return this.activeDate;
+  }
+
+  setActiveDate(date:string){
+    console.log(this.activeDate)
+    console.log(this.activeDate === '')
+    if(this.activeDate === ''){
+      this.activeDate = date;
+    }
+
+    console.log(this.activeDate)
   }
 
   createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
