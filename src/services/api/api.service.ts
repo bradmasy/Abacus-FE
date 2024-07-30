@@ -10,8 +10,8 @@ import { SessionService } from '../session/session.service';
 })
 
 export class ApiService {
-  // private apiUrl = 'https://time-backend-552bc6de8dc8.herokuapp.com';
-  private apiUrl = 'http://localhost:5116';
+  private apiUrl = 'https://time-backend-552bc6de8dc8.herokuapp.com';
+  // private apiUrl = 'http://localhost:5116';
 
   constructor(private http: HttpClient, private session: SessionService) { }
 
@@ -139,5 +139,9 @@ export class ApiService {
 
   }
 
+  deleteTimeBlock = (id:string): Observable<any> => {
+    return this.http.delete(`${this.apiUrl}/TimeBlock/${id}`, { headers: this.createHeader() });
+
+  }
 
 }
