@@ -15,7 +15,8 @@ html {
   font-family: "main";
   min-height: 525px;
   background: linear-gradient(to bottom, #d5eaf0, #ffffff);
-
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 body {

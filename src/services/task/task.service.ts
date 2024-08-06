@@ -9,8 +9,12 @@ import { catchError, EMPTY, Observable } from 'rxjs';
 export class TaskService {
 
   public displayTask: WritableSignal<boolean> = signal(false);
+  public displayDelete: WritableSignal<boolean> = signal(false);
+
   public displayEditTask: WritableSignal<boolean> = signal(false);
   public editData!: { [key: string]: string | number };
+  public deleteData!: { [key: string]: string | number };
+
   public api: ApiService;
   public timePattern = (/(\d+):(\d+)\s*(AM|PM)/i);
 
@@ -102,6 +106,16 @@ export class TaskService {
           return EMPTY;
         })
       )
+  }
+
+  deleteTask(id:string):Observable<any>{
+    return this.api.deleteTimeBlock(id)
+    .pipe(
+      catchError((err) => {
+        console.error(err);
+        return EMPTY;
+      })
+    )
   }
 
 }

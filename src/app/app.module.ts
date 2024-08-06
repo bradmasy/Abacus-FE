@@ -29,7 +29,7 @@ import { TaskService } from '../services/task/task.service';
     PartialsModule,
     AbacusFormsModule,
     MenuModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [ApiService, SessionService, SsrCookieService, ScheduleService, TaskService,
     {

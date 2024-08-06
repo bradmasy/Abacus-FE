@@ -14,6 +14,7 @@ export class EditTaskDialogComponent {
   @Input() display: WritableSignal<boolean> = signal(false);
 
   @Output() taskBookingInformation: EventEmitter<{ [key: string]: string | number }> = new EventEmitter<{ [key: string]: string | number }>()
+  @Output() deleteTaskId:EventEmitter<string> = new EventEmitter();
 
   public options: Option[];
   public taskForm: FormGroup;
@@ -148,6 +149,8 @@ export class EditTaskDialogComponent {
   }
 
   deleteTask() {
+    this.deleteTaskId.emit(this.id.value);
+    this.closeTask();
 
   }
 }

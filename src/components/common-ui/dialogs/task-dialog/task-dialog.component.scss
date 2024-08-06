@@ -24,7 +24,6 @@
   &__container {
     @include flex-row-justify-align(100%, auto, end, center);
     padding: 2px;
-    //border-radius: 4px;
 
     img {
       @include flex-row-justify-align(100%, 12px, end, center);

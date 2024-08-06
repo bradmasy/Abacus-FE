@@ -11,6 +11,7 @@ import { DialogsModule } from './dialogs/dialogs.module';
 import { TaskDialogComponent } from './dialogs/task-dialog/task-dialog.component';
 import { OverlaysModule } from './overlays/overlays.module';
 import { EventDirective } from './schedule/event/event.directive';
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 
@@ -28,6 +29,7 @@ import { EventDirective } from './schedule/event/event.directive';
     TilesModule,
     DialogsModule,
     OverlaysModule,
+    NotificationsModule,
   ],
   exports: [
     AbacusFormsModule,
@@ -39,6 +41,7 @@ import { EventDirective } from './schedule/event/event.directive';
     AbacusButtonsModule,
     OverlaysModule,
     EventDirective,
+    NotificationsModule
   ]
 })
 export class CommonUiModule { }

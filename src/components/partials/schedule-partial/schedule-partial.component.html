@@ -1,4 +1,4 @@
-<section class="ab-dashboard__container__time">
+<section class="ab-dashboard__container__time" #schedule>
   @if(loadingService.loading()){
   <ab-loading-overlay></ab-loading-overlay>
   } @else{
@@ -12,9 +12,14 @@
     [display]="taskService.displayEditTask"
     [taskData]="taskService.editData"
     (taskBookingInformation)="editTask($event)"
-
+    (deleteTaskId)="deleteTask($event)"
   >
   </app-edit-task-dialog>
+  <ab-delete-notification
+  [display]="taskService.displayDelete"
+  [deleteData]="deleteData"
+  >
+  </ab-delete-notification>
   <ab-schedule
     (taskEvent)="receiveTask($event)"
     (dateChangeEvent)="receiveDateChange($event)"

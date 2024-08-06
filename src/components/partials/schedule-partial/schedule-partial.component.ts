@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, WritableSignal, effect, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild, ViewContainerRef, WritableSignal, effect, inject, signal } from '@angular/core';
 import { ApiService } from '../../../services/api/api.service';
 import { EMPTY, Subject, catchError } from 'rxjs';
 import { LoadingService } from '../../../services/loading/loading.service';
 import { ScheduleService } from '../../../services/schedule/schedule.service';
 import { TaskService } from '../../../services/task/task.service';
+import { DeleteNotificationComponent } from '../../common-ui/notifications/delete-notification/delete-notification.component';
 
 export interface TimeBlock {
   id: string;
@@ -24,7 +25,10 @@ export interface TimeBlock {
 export class SchedulePartialComponent implements OnInit {
 
   @Input() date!: WritableSignal<Date>;
+
   @Output() emitTaskData: EventEmitter<{ [key: string]: string | number }> = new EventEmitter<{ [key: string]: string | number }>();
+
+  @ViewChild('schedule', { read: ViewContainerRef }) notificationContainer!: ViewContainerRef;
 
   public displayTask: WritableSignal<boolean> = signal(false);
   public taskData: WritableSignal<{ [key: string]: string | number }> = signal({});
@@ -42,12 +46,15 @@ export class SchedulePartialComponent implements OnInit {
   public scheduleService: ScheduleService = inject(ScheduleService);
   public taskService: TaskService = inject(TaskService)
   public onChanges = new Subject<SimpleChanges>();
+  public deleteData:  WritableSignal<{ [key: string]: string | number }> = signal({});
 
+  public renderer: Renderer2;
   private cdr: ChangeDetectorRef;
 
   constructor() {
     this.api = inject(ApiService);
-    this.cdr = inject(ChangeDetectorRef)
+    this.cdr = inject(ChangeDetectorRef);
+    this.renderer = inject(Renderer2);
 
     effect(() => {
       if (this.changeDate()) {
@@ -68,7 +75,7 @@ export class SchedulePartialComponent implements OnInit {
     startDate.setMinutes(mins);
     return startDate;
   }
-  
+
   calculateDates() {
     this.calculateWeekDates();
     this.year = this.date().getFullYear();
@@ -97,9 +104,8 @@ export class SchedulePartialComponent implements OnInit {
   }
 
   getUpdatedTimeBlocks(startDate: Date, endDate: Date) {
-    this.api.getTimeBlock(startDate.toDateString(), endDate.toDateString())
+    this.scheduleService.getTimeBlocks(startDate, endDate)
       .subscribe((timeBlocks) => {
-
         this.loadingService.loading.set(false);
         setTimeout(() => {
           this.timeBlocksSubject.next(timeBlocks);
@@ -175,15 +181,68 @@ export class SchedulePartialComponent implements OnInit {
 
 
   editTask(event: { [key: string]: string | number }) {
-    this.taskService.updateTask(event) .pipe(
+    this.taskService.updateTask(event).pipe(
       catchError((err: Error) => {
         console.error(err);
         return EMPTY;
       })
     )
-    .subscribe(() => {
-      this.loadingService.loadingOn()
-      this.buildSchedule();
+      .subscribe(() => {
+        this.loadingService.loadingOn()
+        this.buildSchedule();
+      })
+  }
+
+
+  deleteTask(id: string) {
+    this.loadingService.loadingOn()
+    this.deleteData.set({
+      id:id,
     })
+    this.taskService.deleteTask(id).pipe(
+      catchError((err: Error) => {
+        console.error(err);
+        return EMPTY;
+      })
+    )
+      .subscribe(() => {
+        console.log('deleted')
+        this.taskService.displayDelete.set(true);
+        this.buildSchedule();
+        this.showDeleteNotification(id);
+      })
+  }
+
+  showDeleteNotification(taskId: string) {
+   // this
+    // const componentRef = new DeleteNotificationComponent();
+    // const componentRef = this.notificationContainer.createComponent(DeleteNotificationComponent)
+    // componentRef.instance.taskId = taskId;
+
+    // const hostElement = componentRef.location.nativeElement;
+    // console.log(hostElement)
+    // componentRef.instance.slideIn();
+    // setTimeout(()=>{
+    //   componentRef.instance.slideOut();
+    // },3000)
+    // Add the class for slide-in animation
+    //setTimeout(() => { this.renderer.addClass(hostElement, 'slide-out'); }, 2000);
+
+    // hostElement.addEventListener('animationend', (event: AnimationEvent) => {
+    //   console.log(event)
+    //   console.log(event.animationName)
+    //   if (event.animationName.includes('slideIn')) {
+    //     console.log('here')
+    //        this.renderer.removeClass(hostElement, 'slide-in');
+
+    //     setTimeout(() => {
+    //       this.renderer.addClass(hostElement, 'slide-out');
+    //     }, 2000); 
+    //   }
+    // });
+
+  //  this.renderer.addClass(hostElement, 'slide-in');
+
+
   }
 }

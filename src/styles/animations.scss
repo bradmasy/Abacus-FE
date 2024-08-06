@@ -1,0 +1,23 @@
+$start-slide-right: -1200px;
+$end-slide-right: -650px;
+$start-slide-top: -600px;
+$end-slide-top: -375px;
+
+@keyframes slideIn {
+  from {
+    right: $start-slide-right;
+  }
+  to {
+    right: $end-slide-right;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    right: $end-slide-right;
+  }
+
+  to {
+    right: $start-slide-right;
+  }
+}

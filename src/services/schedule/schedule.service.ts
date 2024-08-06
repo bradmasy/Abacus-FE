@@ -1,7 +1,7 @@
 import { ElementRef, Injectable, inject, ViewContainerRef, ComponentRef, QueryList } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { LoadingService } from '../loading/loading.service';
-import { EMPTY, Observable, catchError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, catchError } from 'rxjs';
 import { TimeBlock } from '../../components/partials/schedule-partial/schedule-partial.component';
 import { PositionData } from '../../components/common-ui/schedule/schedule.component';
 import { TaskEventTileComponent } from '../../components/common-ui/tiles/task-event-tile/task-event-tile.component';
@@ -22,28 +22,34 @@ export class ScheduleService {
   private loadingService: LoadingService = inject(LoadingService);
   private times: number[] = [];
   private eventTiles: ComponentRef<TaskEventTileComponent>[] = [];
-  private activeDate:string = ''
+  private activeDate: string = ''
 
   constructor() {
 
+  }
+
+  getTimeBlocks(startDate: Date, endDate: Date) {
+    return this.api.getTimeBlock(startDate.toDateString(), endDate.toDateString())
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return EMPTY;
+        })
+      )
   }
 
   resetTimes() {
     this.times = [];
   }
 
-  getActiveDate():string{
+  getActiveDate(): string {
     return this.activeDate;
   }
 
-  setActiveDate(date:string){
-    console.log(this.activeDate)
-    console.log(this.activeDate === '')
-    if(this.activeDate === ''){
+  setActiveDate(date: string) {
+    if (this.activeDate === '') {
       this.activeDate = date;
     }
-
-    console.log(this.activeDate)
   }
 
   createTaskEventTileOnDOM(viewContainerRef: ViewContainerRef, positionArray: PositionData[], timeblock: TimeBlock) {
@@ -197,12 +203,6 @@ export class ScheduleService {
         elRef.innerHTML = timeInHours > 0 ? `<div>Total Daily Hours: ${timeInHours.toFixed(2)}</div>` : `<div>No Hours Logged</div>`;
       }
     });
-  }
-
-
-
-  getTimeBlocks() {
-
   }
 
   destroyEvents() {

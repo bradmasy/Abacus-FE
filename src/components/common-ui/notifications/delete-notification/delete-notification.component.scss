@@ -1,0 +1,38 @@
+@import "../../../../styles/index.scss";
+
+:host{
+    display: none;
+    max-width: 300px;
+    min-width: 300px;
+    z-index: 3;
+    position: absolute;
+}
+
+:host.visible {
+    display: block; 
+  }
+  
+.ab-delete-notification-container{
+    @include ab-container-shadow();
+    @include flex-row-justify-align(auto, 100%, center, center);
+    background-color: white;
+    position: absolute;
+    padding: 10px;
+    border-radius: 8px;
+    top:-375px;
+    right:$start-slide-right;
+}
+
+.ab-delete-notification-container__message{
+    font-weight: 400;
+}
+
+.slide-in{
+    animation: slideIn 1s forwards;
+
+}
+
+.slide-out{
+    animation: slideOut 1s forwards;
+
+}
